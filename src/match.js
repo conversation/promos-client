@@ -5,6 +5,7 @@ function escapeRegExp(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+// Helper functions required by the parser.
 const helpers = {
   match: function(val, pattern) {
     if (pattern === '*') return true
@@ -36,8 +37,8 @@ const helpers = {
  * p({ count: 43 }) // true
  */
 function match (query) {
-  const body = parser.parse(query)
-  const f = new Function('_helpers', '_env', 'return ' + body) // eslint-disable-line
+  const expression = parser.parse(query)
+  const f = new Function('_helpers', '_env', 'return ' + expression) // eslint-disable-line
   return state => Boolean(f(helpers, state))
 }
 
