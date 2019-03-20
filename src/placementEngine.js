@@ -1,29 +1,35 @@
-const _ = require('lodash')
-const sample = require('lodash/sample')
+const compose = require('fkit/dist/compose')
+const filter = require('fkit/dist/filter')
+const groupBy = require('fkit/dist/groupBy')
+const head = require('fkit/dist/head')
+const map = require('fkit/dist/map')
+const sample = require('fkit/dist/sample')
 
 const match = require('./match')
 
 /**
  * The placement engine is responsible for placing promos into slots, based on
- * various constraints.
+ * promo constraints and the client state object.
  *
- * The constraints for each promo will be matched with the client state. Promos
- * that have matching constraints will be placed, otherwise they will be
+ * All promos with constraints will be matched with the client state object.
+ * Any promos with matching constraints will be placed, otherwise they will be
  * ignored.
  *
+ * @params {Object} state The client state object.
  * @params {Array} promos The list of promos to place.
- * @params {Object} state The client state to constrain the promos with.
- * @returns {Array} The placed promos.
+ * @returns {Array} The list of placed promos.
  */
-function placementEngine (promos, state = {}) {
-  return _
-    .chain(promos)
-    .filter(promo => {
-      return promo.constraints ? match(promo.constraints)(state) : true
-    })
-    .groupBy('groupId')
-    .map(group => sample(group))
-    .value()
+function placementEngine (state, promos) {
+  // Filters promos that have matching constraints.
+  const f = filter(promo => promo.constraints ? match(promo.constraints)(state) : true)
+
+  // Groups the promos by groupId.
+  const g = groupBy((a, b) => a.groupId === b.groupId)
+
+  // Chooses one random promo from each group.
+  const h = map(group => head(sample(1, group)))
+
+  return compose(h, g, f)(promos)
 }
 
 module.exports = placementEngine

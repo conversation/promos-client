@@ -1,9 +1,10 @@
-// Mock the lodash sample function to just return the last value in the array.
-jest.mock('lodash/sample', () => {
-  return jest.fn(values => values[values.length - 1])
+// Mock the sample function to just return the last `n` elements of a list.
+jest.mock('fkit/dist/sample', () => {
+  return jest.fn((n, values) => values.slice(values.length - n, values.length))
 })
 
-const sample = require('lodash/sample')
+const sample = require('fkit/dist/sample')
+
 const placementEngine = require('./placementEngine')
 
 describe('placementEngine', () => {
@@ -14,11 +15,12 @@ describe('placementEngine', () => {
   const promo5 = { id: 4, groupId: 3, constraints: 'url = "ipsum"' }
   const promos = [promo1, promo2, promo3, promo4, promo5]
 
-  it('ensures only one promo from each group is picked', () => {
-    expect(placementEngine(promos)).toEqual([promo1, promo3])
+  it('ensures only one promo from each group is placed', () => {
+    expect(placementEngine({}, promos)).toEqual([promo1, promo3])
   })
 
-  it('filters the promos that have constraints', () => {
-    expect(placementEngine(promos, { url: 'lorem' })).toEqual([promo1, promo3, promo4])
+  it('filters promos with matching constraints', () => {
+    expect(placementEngine({ url: 'lorem' }, promos)).toEqual([promo1, promo3, promo4])
+    expect(placementEngine({ url: 'ipsum' }, promos)).toEqual([promo1, promo3, promo5])
   })
 })

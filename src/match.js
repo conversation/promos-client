@@ -23,17 +23,17 @@ const helpers = {
 }
 
 /**
- * Returns a matching function for the given zerkel query.
+ * Returns a predicate function that matches the given query.
  *
  * @param {String} query The query to match.
- * @returns {Function} A function which returns a boolean indicating whether
- * the given values match the zerkel query.
+ * @returns {Function} A predicate function which returns a boolean indicating
+ * whether the given values match the query.
  *
  * @example
  *
- * const matcher = match('count > 42')
- * matcher({ count: 42 }) // false
- * matcher({ count: 43 }) // true
+ * const p = match('count > 42')
+ * p({ count: 42 }) // false
+ * p({ count: 43 }) // true
  */
 function match (query) {
   const body = parser.parse(query)
