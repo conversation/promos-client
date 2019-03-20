@@ -17,5 +17,8 @@
     "ignore": [
       "src/zerkel-parser.js"
     ]
+  },
+  "dependencies": {
+    "lodash": "^4.17.11"
   }
 }

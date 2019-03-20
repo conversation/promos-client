@@ -1,4 +1,26 @@
-const parser = require('./zerkel-parser')
+const parser = require('./parser')
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
+function escapeRegExp(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+const helpers = {
+  match: function(val, pattern) {
+    if (pattern === '*') return true
+    var pat = escapeRegExp(pattern.replace(/(^\*|\*$)/g, ''))
+    if (pattern[0] === '*') pat = '.+' + pat
+    if (pattern[pattern.length - 1] === '*') pat = pat + '.+'
+    return new RegExp(pat).test(val)
+  },
+  regex: function(val, re) {
+    return new RegExp(re).test(val)
+  },
+  idxof: function(val, x) {
+    var type = (Object.prototype.toString.call(val).match(/^\[object (.*)]$/)||[])[1]
+    return val && (type === 'String' || type === 'Array') && val.indexOf(x) >= 0
+  }
+}
 
 /**
  * Returns a matching function for the given zerkel query.
@@ -13,9 +35,10 @@ const parser = require('./zerkel-parser')
  * matcher({ count: 42 }) // false
  * matcher({ count: 43 }) // true
  */
-const match = query => {
+function match (query) {
   const body = parser.parse(query)
-  return new Function('_env', 'return ' + body) // eslint-disable-line
+  const f = new Function('_helpers', '_env', 'return ' + body) // eslint-disable-line
+  return state => Boolean(f(helpers, state))
 }
 
 module.exports = match
