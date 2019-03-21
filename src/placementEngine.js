@@ -1,10 +1,12 @@
 const always = require('fkit/dist/always')
+const compare = require('fkit/dist/compare')
 const compose = require('fkit/dist/compose')
 const filter = require('fkit/dist/filter')
 const groupBy = require('fkit/dist/groupBy')
 const head = require('fkit/dist/head')
 const map = require('fkit/dist/map')
 const sample = require('fkit/dist/sample')
+const sortBy = require('fkit/dist/sortBy')
 
 const match = require('./match')
 
@@ -28,18 +30,22 @@ function placementEngine (state, promos) {
     return predicate(state)
   })
 
-  // Group the promos by groupId.
-  const g = groupBy((a, b) => a.groupId === b.groupId)
+  // Sort the promos by group.
+  const g = sortBy((a, b) => compare(a.groupId, b.groupId))
+
+  // Group the promos by group. Promos without a group are considered to be in
+  // a group of their own.
+  const h = groupBy((a, b) => a.groupId && b.groupId && a.groupId === b.groupId)
 
   // Choose one random promo from each group.
   //
   // Only one promo from each group may be placed at the same time. This allows
   // us to randomly cycle through multiple variants of a promo.
-  const h = map(group => head(sample(1, group)))
+  const i = map(group => head(sample(1, group)))
 
   // Compose the transform functions and apply the promos to get the list of
   // placed promos.
-  const placedPromos = compose(h, g, f)(promos)
+  const placedPromos = compose(i, h, g, f)(promos)
 
   return placedPromos
 }
