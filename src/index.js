@@ -1,3 +1,5 @@
-const match = require('./match')
+const placementEngine = require('./placementEngine')
 
-module.exports = match
+module.exports = {
+  placementEngine
+}
