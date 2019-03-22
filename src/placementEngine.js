@@ -1,6 +1,7 @@
 const always = require('fkit/dist/always')
 const compare = require('fkit/dist/compare')
 const compose = require('fkit/dist/compose')
+const copy = require('fkit/dist/copy')
 const filter = require('fkit/dist/filter')
 const groupBy = require('fkit/dist/groupBy')
 const head = require('fkit/dist/head')
@@ -12,11 +13,10 @@ const match = require('./match')
 
 /**
  * The placement engine is responsible for placing promos into slots, based on
- * promo constraints and the client state object.
+ * promo constraints and the client state.
  *
- * All promos with constraints will be matched with the client state object.
- * Promos with matching constraints will be placed, otherwise they will be
- * ignored.
+ * All promos with constraints will be matched with the client state. Promos
+ * with matching constraints will be placed, otherwise they will be skipped.
  *
  * @params {Object} state The client state object.
  * @params {Array} promos The list of promos to place.
@@ -27,6 +27,10 @@ function placementEngine (state, promos) {
   const f = filter(promo => {
     // Promos without constraints are passed through.
     const predicate = promo.constraints ? match(promo.constraints) : always(true)
+
+    // Include the promo object in the client state object.
+    state = copy(state, { promo })
+
     return predicate(state)
   })
 
