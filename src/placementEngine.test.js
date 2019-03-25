@@ -1,7 +1,7 @@
-// Mock the sample function to just return the last `n` elements of a list.
-jest.mock('fkit/dist/sample', () => {
-  return jest.fn((n, values) => values.slice(values.length - n, values.length))
-})
+// Mock the sample function to return the first `n` elements of a list.
+jest.mock('fkit/dist/sample', () =>
+  jest.fn((n, values) => values.slice(0, n))
+)
 
 const placementEngine = require('./placementEngine')
 
@@ -16,15 +16,15 @@ describe('placementEngine', () => {
   const promos = [promo1, promo2, promo3, promo4, promo5, promo6, promo7]
 
   it('ensures only one promo from each group is placed', () => {
-    expect(placementEngine({}, promos)).toEqual([promo1, promo2, promo4])
+    expect(placementEngine({}, promos)).toEqual([promo1, promo2, promo3])
   })
 
   it('allows filtering promos by constraints', () => {
-    expect(placementEngine({ url: 'foo' }, promos)).toEqual([promo1, promo2, promo4, promo5])
-    expect(placementEngine({ url: 'bar' }, promos)).toEqual([promo1, promo2, promo4, promo6])
+    expect(placementEngine({ url: 'foo' }, promos)).toEqual([promo1, promo2, promo3, promo5])
+    expect(placementEngine({ url: 'bar' }, promos)).toEqual([promo1, promo2, promo3, promo6])
   })
 
   it('allows filtering promos by properties of the promo', () => {
-    expect(placementEngine({ blocked: [7] }, promos)).toEqual([promo1, promo2, promo4, promo7])
+    expect(placementEngine({ blocked: [7] }, promos)).toEqual([promo1, promo2, promo3, promo7])
   })
 })
