@@ -1,24 +1,24 @@
 const parser = require('./parser')
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
-function escapeRegExp(s) {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+function escapeRegExp (s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
 // Helper functions required by the parser.
 const helpers = {
-  match: function(val, pattern) {
+  match: (val, pattern) => {
     if (pattern === '*') return true
-    var pat = escapeRegExp(pattern.replace(/(^\*|\*$)/g, ''))
+    let pat = escapeRegExp(pattern.replace(/(^\*|\*$)/g, ''))
     if (pattern[0] === '*') pat = '.+' + pat
     if (pattern[pattern.length - 1] === '*') pat = pat + '.+'
     return new RegExp(pat).test(val)
   },
-  regex: function(val, re) {
+  regex: (val, re) => {
     return new RegExp(re).test(val)
   },
-  idxof: function(val, x) {
-    var type = (Object.prototype.toString.call(val).match(/^\[object (.*)]$/)||[])[1]
+  idxof: (val, x) => {
+    let type = (Object.prototype.toString.call(val).match(/^\[object (.*)]$/) || [])[1]
     return val && (type === 'String' || type === 'Array') && val.indexOf(x) >= 0
   }
 }

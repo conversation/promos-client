@@ -3,8 +3,6 @@ jest.mock('fkit/dist/sample', () => {
   return jest.fn((n, values) => values.slice(values.length - n, values.length))
 })
 
-const sample = require('fkit/dist/sample')
-
 const placementEngine = require('./placementEngine')
 
 describe('placementEngine', () => {
