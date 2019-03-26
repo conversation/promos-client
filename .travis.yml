@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+  - "8"
+env:
+  global:
+    - PATH=$HOME/.local/bin:$PATH
+script: make lint test
+deploy:
+  on:
+    branch: master
+    tags: true
+  provider: script
+  script: "cp .npmrc.template $HOME/.npmrc && make release"
+  skip_cleanup: true
