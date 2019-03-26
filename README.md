@@ -1,5 +1,7 @@
 # Promos Client
 
+[![Build Status](https://travis-ci.com/conversation/promos-client.svg?branch=master)](https://travis-ci.com/conversation/promos-client)
+
 The promos client provides a placement engine for placing promos into slots on a page.
 
 ## How It Works
