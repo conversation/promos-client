@@ -1,57 +1,46 @@
-const always = require('fkit/dist/always')
-const compare = require('fkit/dist/compare')
-const compose = require('fkit/dist/compose')
-const copy = require('fkit/dist/copy')
-const filter = require('fkit/dist/filter')
-const groupBy = require('fkit/dist/groupBy')
-const head = require('fkit/dist/head')
-const map = require('fkit/dist/map')
-const sample = require('fkit/dist/sample')
-const sortBy = require('fkit/dist/sortBy')
+const Bus = require('bulb/dist/Bus')
 
-const match = require('./match')
+const groupBy = require('./groupBy')
+const transformer = require('./transformer')
+const userState = require('./userState')
 
 /**
- * The placement engine is responsible for placing promos into slots, based on
- * promo constraints and the client state.
+ * The placement engine is responsible for placing the given promos into slots.
  *
- * All promos with constraints will be matched with the client state. Promos
- * with matching constraints will be placed, otherwise they will be skipped.
- *
- * @params {Object} state The client state object.
- * @params {Array} promos The list of promos to place.
- * @returns {Array} The list of placed promos.
+ * @param {Array} promos The list of promos.
+ * @param {Window} window The window object.
+ * @param {Function} callback The callback function called when the placements
+ * are updated.
  */
-function placementEngine (state, promos) {
-  // Filter the promos that have matching constraints.
-  const f = filter(promo => {
-    // Promos without constraints are passed through.
-    const predicate = promo.constraints ? match(promo.constraints) : always(true)
+function placementEngine (promos, window, callback) {
+  // Load the user state.
+  const user = userState.get(window.localStorage)
 
-    // Include the promo object in the client state object.
-    state = copy(state, { promo })
+  // Create the bus signal.
+  const bus = new Bus()
 
-    return predicate(state)
+  // Create the initial state object. Every time an event is emitted on the
+  // bus, a new state will be generated.
+  const initialState = { promos, user, window }
+
+  // The state signal emits the current placement engine state whenever an
+  // event is emitted on the bus.
+  const stateSignal = bus
+    // Emit an initial `visit` event on the bus.
+    .startWith({ type: 'visit' })
+
+    // Scan the transform function over the events emitted on the bus.
+    .scan(transformer, initialState)
+
+    // Store the user state as a side effect.
+    .tap(({ user, window }) => userState.set(window.localStorage, user))
+
+  // Subscribe to values emitted by the state signal.
+  return stateSignal.subscribe(({ promos, user, window }) => {
+    const placementsMap = groupBy('slotId', promos)
+    const onClose = promo => bus.next({ type: 'close', promo })
+    callback(placementsMap, onClose)
   })
-
-  // Sort the promos by group.
-  const g = sortBy((a, b) => compare(a.groupId, b.groupId))
-
-  // Group the promos by group. Promos without a group are considered to be in
-  // a group of their own.
-  const h = groupBy((a, b) => a.groupId && b.groupId && a.groupId === b.groupId)
-
-  // Choose one random promo from each group.
-  //
-  // Only one promo from each group may be placed at the same time. This allows
-  // us to randomly cycle through multiple variants of a promo.
-  const i = map(group => head(sample(1, group)))
-
-  // Compose the transform functions and apply the promos to get the list of
-  // placed promos.
-  const placedPromos = compose(i, h, g, f)(promos)
-
-  return placedPromos
 }
 
 module.exports = placementEngine

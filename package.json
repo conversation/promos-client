@@ -6,6 +6,7 @@
   "license": "MIT",
   "main": "src/index.js",
   "dependencies": {
+    "bulb": "^6.1.0",
     "fkit": "^2.0.0"
   },
   "devDependencies": {
