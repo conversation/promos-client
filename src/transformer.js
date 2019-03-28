@@ -12,12 +12,12 @@ function incrementVisits (user) {
 
 // Adds the given promo to the list of blocked promos for the user.
 function blockPromo (promo, user) {
-  return update('blocked', union([promo.id]), user)
+  return update('blocked', union([promo.promoId]), user)
 }
 
 // Updates the impressions for the given user.
 function updateImpressions (promos, user) {
-  const ids = promos.map(get('id'))
+  const ids = promos.map(get('promoId'))
   return update('impressions', union(ids), user)
 }
 
@@ -40,7 +40,7 @@ function transformer (state, event) {
   }
 
   // Recalculate the placed promos.
-  promos = placePromos(promos, { user, window })
+  promos = placePromos(promos, user, window)
 
   // Add promos to the list of impressions.
   user = updateImpressions(promos, user)

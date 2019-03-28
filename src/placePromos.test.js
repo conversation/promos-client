@@ -6,25 +6,31 @@ jest.mock('fkit/dist/sample', () =>
 const placePromos = require('./placePromos')
 
 describe('placePromos', () => {
-  const promo1 = { id: 1, groupId: null }
-  const promo2 = { id: 2, groupId: null }
-  const promo3 = { id: 3, groupId: 1 }
-  const promo4 = { id: 4, groupId: 1 }
-  const promo5 = { id: 5, groupId: 2, constraints: 'url = "foo"' }
-  const promo6 = { id: 6, groupId: 2, constraints: 'url = "bar"' }
-  const promo7 = { id: 7, groupId: 3, constraints: 'blocked CONTAINS promo.id' }
-  const promos = [promo1, promo2, promo3, promo4, promo5, promo6, promo7]
+  const a = { promoId: 1, groupId: null }
+  const b = { promoId: 2, groupId: null }
+  const c = { promoId: 3, groupId: 1 }
+  const d = { promoId: 4, groupId: 1 }
+  const e = { promoId: 5, groupId: 2, constraints: 'user.url = "foo"' }
+  const f = { promoId: 6, groupId: 2, constraints: 'user.url = "bar"' }
+  const g = { promoId: 8, groupId: 3, constraints: 'browser.name = "Chrome"' }
+  const h = { promoId: 7, groupId: 3, constraints: 'user.blocked CONTAINS promoId' }
+  const promos = [a, b, c, d, e, f, g, h]
 
   it('ensures only one promo from each group is placed', () => {
-    expect(placePromos(promos, {})).toEqual([promo1, promo2, promo3])
+    expect(placePromos(promos, {})).toEqual([a, b, c])
   })
 
-  it('allows filtering promos by constraints', () => {
-    expect(placePromos(promos, { url: 'foo' })).toEqual([promo1, promo2, promo3, promo5])
-    expect(placePromos(promos, { url: 'bar' })).toEqual([promo1, promo2, promo3, promo6])
+  it('allows filtering promos by user', () => {
+    expect(placePromos(promos, { url: 'foo' })).toEqual([a, b, c, e])
+    expect(placePromos(promos, { url: 'bar' })).toEqual([a, b, c, f])
   })
 
-  it('allows filtering promos by properties of the promo', () => {
-    expect(placePromos(promos, { blocked: [7] })).toEqual([promo1, promo2, promo3, promo7])
+  it('allows filtering promos by user agent', () => {
+    const window = { navigator: { userAgent: 'Chrome/72.0.3626.121' } }
+    expect(placePromos(promos, {}, window)).toEqual([a, b, c, g])
+  })
+
+  it('allows filtering promos by promoId', () => {
+    expect(placePromos(promos, { blocked: [7] })).toEqual([a, b, c, h])
   })
 })
