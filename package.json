@@ -5,6 +5,13 @@
   "author": "The Conversation <support@theconversation.com>",
   "license": "MIT",
   "main": "src/index.js",
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/conversation/promos-client.git"
+  },
   "dependencies": {
     "bulb": "^6.1.0",
     "fkit": "^2.0.0",
