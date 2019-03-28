@@ -2,7 +2,7 @@ const transformer = require('./transformer')
 
 describe('transformer', () => {
   const state = {
-    promos: [{ id: 1 }, { id: 2 }, { id: 3 }],
+    promos: [{ promoId: 1 }, { promoId: 2 }, { promoId: 3 }],
     user: { blocked: [], impressions: [], visits: 1 },
     window: {}
   }
@@ -23,7 +23,7 @@ describe('transformer', () => {
 
   describe('with a close event', () => {
     it('adds the promo to the list of blocked promos', () => {
-      const event = { type: 'close', promo: { id: 1 } }
+      const event = { type: 'close', promo: { promoId: 1 } }
       expect(transformer(state, event)).toHaveProperty('user.blocked', [1])
     })
   })

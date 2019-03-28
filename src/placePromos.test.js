@@ -6,13 +6,13 @@ jest.mock('fkit/dist/sample', () =>
 const placePromos = require('./placePromos')
 
 describe('placePromos', () => {
-  const promo1 = { id: 1, groupId: null }
-  const promo2 = { id: 2, groupId: null }
-  const promo3 = { id: 3, groupId: 1 }
-  const promo4 = { id: 4, groupId: 1 }
-  const promo5 = { id: 5, groupId: 2, constraints: 'url = "foo"' }
-  const promo6 = { id: 6, groupId: 2, constraints: 'url = "bar"' }
-  const promo7 = { id: 7, groupId: 3, constraints: 'blocked CONTAINS promo.id' }
+  const promo1 = { promoId: 1, groupId: null }
+  const promo2 = { promoId: 2, groupId: null }
+  const promo3 = { promoId: 3, groupId: 1 }
+  const promo4 = { promoId: 4, groupId: 1 }
+  const promo5 = { promoId: 5, groupId: 2, constraints: 'url = "foo"' }
+  const promo6 = { promoId: 6, groupId: 2, constraints: 'url = "bar"' }
+  const promo7 = { promoId: 7, groupId: 3, constraints: 'blocked CONTAINS promoId' }
   const promos = [promo1, promo2, promo3, promo4, promo5, promo6, promo7]
 
   it('ensures only one promo from each group is placed', () => {

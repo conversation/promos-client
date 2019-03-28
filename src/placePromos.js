@@ -6,10 +6,13 @@ const filter = require('fkit/dist/filter')
 const groupBy = require('fkit/dist/groupBy')
 const head = require('fkit/dist/head')
 const map = require('fkit/dist/map')
+const pick = require('fkit/dist/pick')
 const sample = require('fkit/dist/sample')
 const sortBy = require('fkit/dist/sortBy')
 
 const match = require('./match')
+
+const PROMO_PROPERTIES = ['creativeId', 'promoId', 'slotId', 'groupId', 'campaignId']
 
 /**
  * Filters promos based on which promo constraints are satisfied by the client
@@ -31,8 +34,8 @@ function placePromos (promos, state) {
     // Promos without constraints are passed through.
     const predicate = promo.constraints ? match(promo.constraints) : always(true)
 
-    // Include the promo object in the client state object.
-    state = copy(state, { promo })
+    // Include several properties from the promo in the client state.
+    state = copy(state, pick(PROMO_PROPERTIES, promo))
 
     return predicate(state)
   })
