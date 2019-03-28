@@ -40,7 +40,7 @@ function transformer (state, event) {
   }
 
   // Recalculate the placed promos.
-  promos = placePromos(promos, { user, window })
+  promos = placePromos(promos, user, window)
 
   // Add promos to the list of impressions.
   user = updateImpressions(promos, user)

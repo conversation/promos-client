@@ -3,12 +3,14 @@ const compare = require('fkit/dist/compare')
 const compose = require('fkit/dist/compose')
 const copy = require('fkit/dist/copy')
 const filter = require('fkit/dist/filter')
+const getIn = require('fkit/dist/getIn')
 const groupBy = require('fkit/dist/groupBy')
 const head = require('fkit/dist/head')
 const map = require('fkit/dist/map')
 const pick = require('fkit/dist/pick')
 const sample = require('fkit/dist/sample')
 const sortBy = require('fkit/dist/sortBy')
+const UAParser = require('ua-parser-js')
 
 const match = require('./match')
 
@@ -25,19 +27,32 @@ const PROMO_PROPERTIES = ['creativeId', 'promoId', 'slotId', 'groupId', 'campaig
  *   - Promos without a group are picked independently of each other.
  *
  * @params {Array} promos The list of promos to place.
- * @params {Object} state The client state object.
+ * @params {Object} user The user object.
+ * @params {Window} window The window object.
  * @returns {Array} The list of placed promos.
  */
-function placePromos (promos, state) {
+function placePromos (promos, user, window) {
+  const parser = new UAParser(getIn('navigator.userAgent', window))
+
+  // The client state object used to match promo constraints. This object
+  // should contain everything we want to match against.
+  const clientState = {
+    browser: parser.getBrowser(),
+    device: parser.getDevice(),
+    os: parser.getOS(),
+    user,
+    window
+  }
+
   // Filter the promos that have matching constraints.
   const f = filter(promo => {
     // Promos without constraints are passed through.
     const predicate = promo.constraints ? match(promo.constraints) : always(true)
 
     // Include several properties from the promo in the client state.
-    state = copy(state, pick(PROMO_PROPERTIES, promo))
+    const clientState_ = copy(clientState, pick(PROMO_PROPERTIES, promo))
 
-    return predicate(state)
+    return predicate(clientState_)
   })
 
   // Sort the promos by group.
