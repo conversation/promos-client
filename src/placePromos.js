@@ -4,7 +4,7 @@ const compose = require('fkit/dist/compose')
 const copy = require('fkit/dist/copy')
 const filter = require('fkit/dist/filter')
 const getIn = require('fkit/dist/getIn')
-const groupBy = require('fkit/dist/groupBy')
+const chunkBy = require('fkit/dist/chunkBy')
 const head = require('fkit/dist/head')
 const map = require('fkit/dist/map')
 const pick = require('fkit/dist/pick')
@@ -58,9 +58,9 @@ function placePromos (promos, user, window) {
   // Sort the promos by group.
   const g = sortBy((a, b) => compare(a.groupId, b.groupId))
 
-  // Group the promos by group. Promos without a group are considered to be in
+  // Chunk the promos by group. Promos without a group are considered to be in
   // a group of their own.
-  const h = groupBy((a, b) => a.groupId && b.groupId && a.groupId === b.groupId)
+  const h = chunkBy((a, b) => a.groupId && b.groupId && a.groupId === b.groupId)
 
   // Choose one random promo from each group.
   //

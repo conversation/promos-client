@@ -1,6 +1,6 @@
 const Bus = require('bulb/dist/Bus')
+const groupBy = require('fkit/dist/groupBy')
 
-const groupBy = require('./groupBy')
 const transformer = require('./transformer')
 const userState = require('./userState')
 
