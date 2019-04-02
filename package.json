@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "bulb": "^6.1.0",
-    "fkit": "^2.0.0",
+    "fkit": "^3.0.1",
     "ua-parser-js": "^0.7.19"
   },
   "devDependencies": {
