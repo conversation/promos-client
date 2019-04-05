@@ -1,12 +1,12 @@
+const userState = require('./userState')
+const placementEngine = require('./placementEngine')
+
 jest.mock('./userState', () => ({
   get: jest.fn(),
   set: jest.fn()
 }))
 
 jest.mock('./transformer', () => jest.fn(a => a))
-
-const userState = require('./userState')
-const placementEngine = require('./placementEngine')
 
 describe('placePromos', () => {
   it('calls the callback', done => {

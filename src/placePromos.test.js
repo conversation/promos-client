@@ -1,9 +1,9 @@
+const placePromos = require('./placePromos')
+
 // Mock the sample function to return the first `n` elements of a list.
 jest.mock('fkit/dist/sample', () =>
   jest.fn((n, values) => values.slice(0, n))
 )
-
-const placePromos = require('./placePromos')
 
 describe('placePromos', () => {
   const a = { promoId: 1, groupId: null }
