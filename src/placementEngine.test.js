@@ -10,25 +10,20 @@ jest.mock('./transformer', () => jest.fn(a => a))
 
 describe('placePromos', () => {
   it('calls the callback', done => {
-    const callback = jest.fn()
-
-    placementEngine([], window, callback)
-
-    setTimeout(() => {
-      expect(callback).toHaveBeenCalled()
-      done()
-    }, 0)
+    placementEngine([], window)
+      .subscribe(({ placementsMap }) => {
+        expect(placementsMap).toEqual({})
+        done()
+      })
   })
 
   it('loads and stores the user state', done => {
     const user = { visits: 1 }
     userState.get.mockReturnValue(user)
-
-    placementEngine([], window, jest.fn())
-
-    setTimeout(() => {
-      expect(userState.set).toHaveBeenLastCalledWith(window.localStorage, user)
-      done()
-    }, 0)
+    placementEngine([], window)
+      .subscribe(() => {
+        expect(userState.set).toHaveBeenLastCalledWith(window.localStorage, user)
+        done()
+      })
   })
 })
