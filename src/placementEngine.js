@@ -9,15 +9,17 @@ const userState = require('./userState')
  *
  * @param {Array} promos The list of promos.
  * @param {Window} window The window object.
- * @param {Function} callback The callback function called when the placements
- * are updated.
+ * @returns {Signal} A signal the emits placement maps.
  */
-function placementEngine (promos, window, callback) {
+function placementEngine (promos, window) {
   // Load the user state.
   const user = userState.get(window.localStorage)
 
   // Create the bus signal.
   const bus = new Bus()
+
+  // A function that emits a `close` event on the bus.
+  const onClose = promo => bus.next({ type: 'close', promo })
 
   // Create the initial state object. Every time an event is emitted on the
   // bus, a new state will be generated.
@@ -35,12 +37,13 @@ function placementEngine (promos, window, callback) {
     // Store the user state as a side effect.
     .tap(({ user, window }) => userState.set(window.localStorage, user))
 
-  // Subscribe to values emitted by the state signal.
-  return stateSignal.subscribe(({ promos, user, window }) => {
-    const placementsMap = groupBy('slotId', promos)
-    const onClose = promo => bus.next({ type: 'close', promo })
-    callback(placementsMap, onClose)
-  })
+    // Group promos by slot.
+    .map(({ promos, user }) => {
+      const placementsMap = groupBy('slotId', promos)
+      return { placementsMap, onClose }
+    })
+
+  return stateSignal
 }
 
 module.exports = placementEngine
