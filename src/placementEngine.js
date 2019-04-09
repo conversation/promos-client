@@ -1,8 +1,8 @@
-const Bus = require('bulb/dist/Bus')
-const groupBy = require('fkit/dist/groupBy')
+import Bus from 'bulb/dist/Bus'
+import groupBy from 'fkit/dist/groupBy'
 
-const transformer = require('./transformer')
-const userState = require('./userState')
+import transformer from './transformer'
+import userState from './userState'
 
 /**
  * The placement engine is responsible for placing the given promos into slots.

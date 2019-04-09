@@ -1,9 +1,9 @@
-const get = require('fkit/dist/get')
-const inc = require('fkit/dist/inc')
-const union = require('fkit/dist/union')
-const update = require('fkit/dist/update')
+import get from 'fkit/dist/get'
+import inc from 'fkit/dist/inc'
+import union from 'fkit/dist/union'
+import update from 'fkit/dist/update'
 
-const placePromos = require('./placePromos')
+import placePromos from './placePromos'
 
 // Increments the number of visits for the given user.
 function incrementVisits (user) {

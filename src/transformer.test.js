@@ -1,4 +1,4 @@
-const transformer = require('./transformer')
+import transformer from './transformer'
 
 describe('transformer', () => {
   const state = {

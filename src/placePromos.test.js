@@ -1,4 +1,4 @@
-const placePromos = require('./placePromos')
+import placePromos from './placePromos'
 
 // Mock the sample function to return the first `n` elements of a list.
 jest.mock('fkit/dist/sample', () =>

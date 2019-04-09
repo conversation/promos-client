@@ -1,5 +1,5 @@
-const userState = require('./userState')
-const placementEngine = require('./placementEngine')
+import userState from './userState'
+import placementEngine from './placementEngine'
 
 jest.mock('./userState', () => ({
   get: jest.fn(),

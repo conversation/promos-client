@@ -1,4 +1,4 @@
-const match = require('./match')
+import match from './match'
 
 describe('match', () => {
   it('handles variables', () => {
