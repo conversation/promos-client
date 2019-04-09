@@ -4,7 +4,7 @@
  * @param storage The storage object.
  * @returns {Object} The user state.
  */
-function get (storage) {
+export function get (storage) {
   return JSON.parse(storage.getItem('user')) || {
     blocked: [],
     impressions: [],
@@ -18,8 +18,6 @@ function get (storage) {
  * @param storage The storage object.
  * @param {Object} user The user state.
  */
-function set (storage, user) {
+export function set (storage, user) {
   storage.setItem('user', JSON.stringify(user))
 }
-
-module.exports = { get, set }

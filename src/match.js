@@ -36,10 +36,8 @@ const helpers = {
  * p({ count: 42 }) // false
  * p({ count: 43 }) // true
  */
-function match (query) {
+export default function match (query) {
   const expression = parser.parse(query)
   const f = new Function('_helpers', '_env', 'return ' + expression) // eslint-disable-line
   return state => Boolean(f(helpers, state))
 }
-
-module.exports = match

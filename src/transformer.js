@@ -28,7 +28,7 @@ function updateImpressions (promos, user) {
  * @param {Object} event The event.
  * @returns A new state.
  */
-function transformer (state, event) {
+export default function transformer (state, event) {
   let { promos, user, window } = state
 
   if (event.type === 'visit') {
@@ -47,5 +47,3 @@ function transformer (state, event) {
 
   return { promos, user, window }
 }
-
-module.exports = transformer

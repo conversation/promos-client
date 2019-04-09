@@ -1,4 +1,4 @@
-import userState from './userState'
+import { get, set } from './userState'
 import placementEngine from './placementEngine'
 
 jest.mock('./userState', () => ({
@@ -19,10 +19,10 @@ describe('placePromos', () => {
 
   it('loads and stores the user state', done => {
     const user = { visits: 1 }
-    userState.get.mockReturnValue(user)
+    get.mockReturnValue(user)
     placementEngine([], window)
       .subscribe(() => {
-        expect(userState.set).toHaveBeenLastCalledWith(window.localStorage, user)
+        expect(set).toHaveBeenLastCalledWith(window.localStorage, user)
         done()
       })
   })

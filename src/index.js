@@ -1,7 +1,2 @@
-import placePromos from './placePromos'
-import placementEngine from './placementEngine'
-
-export default {
-  placePromos,
-  placementEngine
-}
+export { default as placePromos } from './placePromos'
+export { default as placementEngine } from './placementEngine'

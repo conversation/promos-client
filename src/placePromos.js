@@ -12,7 +12,7 @@ import sample from 'fkit/dist/sample'
 import sortBy from 'fkit/dist/sortBy'
 import UAParser from 'ua-parser-js'
 
-const match = require('./match')
+import match from './match'
 
 const PROMO_PROPERTIES = ['creativeId', 'promoId', 'slotId', 'groupId', 'campaignId']
 
@@ -31,7 +31,7 @@ const PROMO_PROPERTIES = ['creativeId', 'promoId', 'slotId', 'groupId', 'campaig
  * @params {Window} window The window object.
  * @returns {Array} The list of placed promos.
  */
-function placePromos (promos, user, window) {
+export default function placePromos (promos, user, window) {
   const parser = new UAParser(getIn('navigator.userAgent', window))
 
   // The client state object used to match promo constraints. This object
@@ -72,5 +72,3 @@ function placePromos (promos, user, window) {
   // placed promos.
   return compose(i, h, g, f)(promos)
 }
-
-module.exports = placePromos

@@ -2,7 +2,7 @@ import Bus from 'bulb/dist/Bus'
 import groupBy from 'fkit/dist/groupBy'
 
 import transformer from './transformer'
-import userState from './userState'
+import { get, set } from './userState'
 
 /**
  * The placement engine is responsible for placing the given promos into slots.
@@ -11,9 +11,9 @@ import userState from './userState'
  * @param {Window} window The window object.
  * @returns {Signal} A signal the emits placement maps.
  */
-function placementEngine (promos, window) {
+export default function placementEngine (promos, window) {
   // Load the user state.
-  const user = userState.get(window.localStorage)
+  const user = get(window.localStorage)
 
   // Create the bus signal.
   const bus = new Bus()
@@ -35,7 +35,7 @@ function placementEngine (promos, window) {
     .scan(transformer, initialState)
 
     // Store the user state as a side effect.
-    .tap(({ user, window }) => userState.set(window.localStorage, user))
+    .tap(({ user, window }) => set(window.localStorage, user))
 
     // Group promos by slot.
     .map(({ promos, user }) => {
@@ -45,5 +45,3 @@ function placementEngine (promos, window) {
 
   return stateSignal
 }
-
-module.exports = placementEngine
