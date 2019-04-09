@@ -2,11 +2,15 @@
   "name": "@theconversation/promos-client",
   "version": "1.1.0",
   "description": "Provides various functions for querying The Conversation's promos API",
-  "author": "The Conversation <support@theconversation.com>",
+  "author": "The Conversation <platform@theconversation.com>",
   "license": "MIT",
-  "main": "src/index.js",
+  "keywords": [
+    "theconversation",
+    "promo"
+  ],
+  "main": "dist/index.js",
   "files": [
-    "src"
+    "dist"
   ],
   "repository": {
     "type": "git",
@@ -14,10 +18,13 @@
   },
   "dependencies": {
     "bulb": "^6.1.0",
-    "fkit": "^3.0.1",
+    "fkit": "^3.0.2",
     "ua-parser-js": "^0.7.19"
   },
   "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.3.3",
+    "@babel/preset-env": "^7.3.1",
     "jest": "^24.6.0",
     "standard": "^12.0.1"
   },
