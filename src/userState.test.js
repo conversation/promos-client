@@ -1,4 +1,4 @@
-const userState = require('./userState')
+import userState from './userState'
 
 describe('get', () => {
   it("returns the user state if it's in the store", () => {

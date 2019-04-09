@@ -1,4 +1,4 @@
-const parser = require('./parser')
+import parser from './parser'
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
 function escapeRegExp (s) {

@@ -1,7 +1,7 @@
-const placePromos = require('./placePromos')
-const placementEngine = require('./placementEngine')
+import placePromos from './placePromos'
+import placementEngine from './placementEngine'
 
-module.exports = {
+export default {
   placePromos,
   placementEngine
 }
