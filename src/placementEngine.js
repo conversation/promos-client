@@ -1,5 +1,4 @@
 import Bus from 'bulb/dist/Bus'
-import groupBy from 'fkit/dist/groupBy'
 
 import transformer from './transformer'
 import { get, set } from './userState'
@@ -9,7 +8,7 @@ import { get, set } from './userState'
  *
  * @param {Array} promos The list of promos.
  * @param {Window} window The window object.
- * @returns {Signal} A signal the emits placement maps.
+ * @returns {Signal} A signal the emits the placed promos.
  */
 export default function placementEngine (promos, window) {
   // Load the user state.
@@ -37,11 +36,8 @@ export default function placementEngine (promos, window) {
     // Store the user state as a side effect.
     .tap(({ user, window }) => set(window.localStorage, user))
 
-    // Group promos by slot.
-    .map(({ promos, user }) => {
-      const placementsMap = groupBy('slotId', promos)
-      return { placementsMap, onClose }
-    })
+    // Emit the placed promos and onClose callback.
+    .map(({ promos }) => ({ promos, onClose }))
 
   return stateSignal
 }

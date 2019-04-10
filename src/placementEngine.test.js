@@ -11,8 +11,8 @@ jest.mock('./transformer', () => jest.fn(a => a))
 describe('placePromos', () => {
   it('calls the callback', done => {
     placementEngine([], window)
-      .subscribe(({ placementsMap }) => {
-        expect(placementsMap).toEqual({})
+      .subscribe(({ promos }) => {
+        expect(promos).toEqual([])
         done()
       })
   })

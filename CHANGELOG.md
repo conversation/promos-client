@@ -1,3 +1,7 @@
+## Unreleased
+
+* Emit promos from the placement engine
+
 ## 1.1.1 (09-04-2019)
 
 * Transpile source files
