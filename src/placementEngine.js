@@ -8,7 +8,7 @@ import { get, set } from './userState'
  *
  * @param {Array} promos The list of promos.
  * @param {Window} window The window object.
- * @returns {Signal} A signal the emits the placed promos.
+ * @returns {Signal} A signal that emits the placed promos.
  */
 export default function placementEngine (promos, window) {
   // Load the user state.
