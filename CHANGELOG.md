@@ -1,4 +1,4 @@
-## Unreleased
+## 1.2.0 (11-04-2019)
 
 * Emit promos from the placement engine
 
