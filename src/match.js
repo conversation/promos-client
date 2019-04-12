@@ -41,5 +41,5 @@ const helpers = {
 export default function match (query) {
   const expression = parser.parse(query)
   const f = new Function('_helpers', '_env', 'return ' + expression) // eslint-disable-line
-  return state => Boolean(f(helpers, state))
+  return state => f(helpers, state)
 }
