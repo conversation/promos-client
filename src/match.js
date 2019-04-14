@@ -7,17 +7,19 @@ function escapeRegExp (s) {
 
 // Helper functions required by the parser.
 const helpers = {
-  match: (val, pattern) => {
+  match (val, pattern) {
     if (pattern === '*') return true
     let pat = escapeRegExp(pattern.replace(/(^\*|\*$)/g, ''))
     if (pattern[0] === '*') pat = '.+' + pat
     if (pattern[pattern.length - 1] === '*') pat = pat + '.+'
     return new RegExp(pat).test(val)
   },
-  regex: (val, re) => {
+
+  regex (val, re) {
     return new RegExp(re).test(val)
   },
-  idxof: (val, x) => {
+
+  idxof (val, x) {
     let type = (Object.prototype.toString.call(val).match(/^\[object (.*)]$/) || [])[1]
     return val && (type === 'String' || type === 'Array') && val.indexOf(x) >= 0
   }
