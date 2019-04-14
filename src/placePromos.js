@@ -1,10 +1,10 @@
 import always from 'fkit/dist/always'
+import chunkBy from 'fkit/dist/chunkBy'
 import compare from 'fkit/dist/compare'
 import compose from 'fkit/dist/compose'
 import copy from 'fkit/dist/copy'
 import filter from 'fkit/dist/filter'
-import getIn from 'fkit/dist/getIn'
-import chunkBy from 'fkit/dist/chunkBy'
+import get from 'fkit/dist/get'
 import head from 'fkit/dist/head'
 import map from 'fkit/dist/map'
 import pick from 'fkit/dist/pick'
@@ -32,7 +32,7 @@ const PROMO_PROPERTIES = ['creativeId', 'promoId', 'slotId', 'groupId', 'campaig
  * @returns {Array} The list of placed promos.
  */
 export default function placePromos (promos, user, window) {
-  const parser = new UAParser(getIn('navigator.userAgent', window))
+  const parser = new UAParser(get('navigator.userAgent', window))
 
   // The client state object used to match promo constraints. This object
   // should contain everything we want to match against.
