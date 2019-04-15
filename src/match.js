@@ -20,8 +20,13 @@ const helpers = {
   },
 
   idxof (val, x) {
-    let type = (Object.prototype.toString.call(val).match(/^\[object (.*)]$/) || [])[1]
-    return val && (type === 'String' || type === 'Array') && val.indexOf(x) >= 0
+    if (!val) {
+      return false
+    } else if (typeof val === 'string' || Array.isArray(val)) {
+      return val.indexOf(x) >= 0
+    } else {
+      return val.hasOwnProperty(x)
+    }
   }
 }
 

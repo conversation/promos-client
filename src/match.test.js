@@ -115,11 +115,20 @@ describe('match', () => {
     expect(match('"bar" LIKE "fo*"')()).toBe(false)
   })
 
-  it('handles CONTAINS operator', () => {
-    expect(match('"foo" CONTAINS "f"')()).toBe(true)
-    expect(match('"bar" CONTAINS "f"')()).toBe(false)
+  describe('handles CONTAINS operator', () => {
+    it('with a string', () => {
+      expect(match('"foo" CONTAINS "f"')()).toBe(true)
+      expect(match('"bar" CONTAINS "f"')()).toBe(false)
+    })
 
-    expect(match('["foo"] CONTAINS "foo"')()).toBe(true)
-    expect(match('["bar"] CONTAINS "foo"')()).toBe(false)
+    it('with an array', () => {
+      expect(match('["foo"] CONTAINS "foo"')()).toBe(true)
+      expect(match('["bar"] CONTAINS "foo"')()).toBe(false)
+    })
+
+    it('with an object', () => {
+      expect(match('a CONTAINS "b"')(state)).toBe(true)
+      expect(match('a CONTAINS "foo"')(state)).toBe(false)
+    })
   })
 })
