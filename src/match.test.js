@@ -1,13 +1,6 @@
 import match from './match'
 
 describe('match', () => {
-  const state = {
-    a: { b: { c: 'foo' } },
-    d: 'a',
-    e: 'b',
-    f: 'c'
-  }
-
   it('handles number literals', () => {
     expect(match('1')()).toBe(1)
     expect(match('2')()).toBe(2)
@@ -18,10 +11,17 @@ describe('match', () => {
   })
 
   it('handles variables', () => {
-    expect(match('a')(state)).toEqual({ b: { c: 'foo' } })
+    expect(match('a')({ a: 'foo' })).toEqual('foo')
   })
 
   describe('handles properties', () => {
+    const state = {
+      a: { b: { c: 'foo' } },
+      d: 'a',
+      e: 'b',
+      f: 'c'
+    }
+
     it('with dot notation', () => {
       expect(match('a.b')(state)).toEqual({ c: 'foo' })
       expect(match('a.b.c')(state)).toBe('foo')
@@ -44,16 +44,14 @@ describe('match', () => {
     })
   })
 
-  it('handles expression grouping', () => {
-    expect(match('(true)')()).toBe(true)
-  })
-
   it('handles equality operators', () => {
-    expect(match('1 = 1')()).toBe(true)
-    expect(match('1 = 2')()).toBe(false)
+    const state = { a: 1, b: 2, c: 3 }
 
-    expect(match('1 != 1')()).toBe(false)
-    expect(match('1 != 2')()).toBe(true)
+    expect(match('1 = 1')(state)).toBe(true)
+    expect(match('1 = 2')(state)).toBe(false)
+
+    expect(match('1 != 1')(state)).toBe(false)
+    expect(match('1 != 2')(state)).toBe(true)
 
     expect(match('"foo" = "foo"')()).toBe(true)
     expect(match('"foo" = "bar"')()).toBe(false)
@@ -63,72 +61,99 @@ describe('match', () => {
   })
 
   it('handles comparison operators', () => {
-    expect(match('1 < 2')()).toBe(true)
-    expect(match('2 < 1')()).toBe(false)
-    expect(match('2 < 2')()).toBe(false)
+    const state = { a: 1, b: 2, c: 3 }
 
-    expect(match('1 <= 2')()).toBe(true)
-    expect(match('2 <= 1')()).toBe(false)
-    expect(match('2 <= 2')()).toBe(true)
+    expect(match('a < 2')(state)).toBe(true)
+    expect(match('b < 1')(state)).toBe(false)
+    expect(match('b < 2')(state)).toBe(false)
 
-    expect(match('1 > 2')()).toBe(false)
-    expect(match('2 > 1')()).toBe(true)
-    expect(match('2 > 2')()).toBe(false)
+    expect(match('a <= 2')(state)).toBe(true)
+    expect(match('b <= 1')(state)).toBe(false)
+    expect(match('b <= 2')(state)).toBe(true)
 
-    expect(match('1 >= 2')()).toBe(false)
-    expect(match('2 >= 1')()).toBe(true)
-    expect(match('2 >= 2')()).toBe(true)
+    expect(match('a > 2')(state)).toBe(false)
+    expect(match('b > 1')(state)).toBe(true)
+    expect(match('b > 2')(state)).toBe(false)
+
+    expect(match('a >= 2')(state)).toBe(false)
+    expect(match('b >= 1')(state)).toBe(true)
+    expect(match('b >= 2')(state)).toBe(true)
   })
 
   it('handles arithmetic operators', () => {
-    expect(match('1 + 2')()).toBe(3)
-    expect(match('1 - 2')()).toBe(-1)
-    expect(match('1 * 2')()).toBe(2)
-    expect(match('1 / 2')()).toBe(0.5)
+    const state = { a: 1, b: 2, c: 3 }
+
+    expect(match('a + 2')(state)).toBe(3)
+    expect(match('a - 2')(state)).toBe(-1)
+    expect(match('a * 2')(state)).toBe(2)
+    expect(match('a / 2')(state)).toBe(0.5)
+
+    expect(match('1 + 2 * 3')()).toBe(7)
+    expect(match('1 + (2 * 3)')()).toBe(7)
+    expect(match('(1 + 2) * 3')()).toBe(9)
   })
 
   it('handles boolean operators', () => {
-    expect(match('true AND true')()).toBe(true)
-    expect(match('true AND false')()).toBe(false)
-    expect(match('false AND true')()).toBe(false)
-    expect(match('false AND false')()).toBe(false)
+    const state = { a: true, b: false }
 
-    expect(match('true OR true')()).toBe(true)
-    expect(match('true OR false')()).toBe(true)
-    expect(match('false OR true')()).toBe(true)
-    expect(match('false OR false')()).toBe(false)
+    expect(match('a AND true')(state)).toBe(true)
+    expect(match('a AND false')(state)).toBe(false)
+    expect(match('b AND true')(state)).toBe(false)
+    expect(match('b AND false')(state)).toBe(false)
+
+    expect(match('a OR true')(state)).toBe(true)
+    expect(match('a OR false')(state)).toBe(true)
+    expect(match('b OR true')(state)).toBe(true)
+    expect(match('b OR false')(state)).toBe(false)
 
     expect(match('NOT true')()).toBe(false)
     expect(match('NOT false')()).toBe(true)
   })
 
   it('handles regex operators', () => {
-    expect(match('"foo" =~ "^f.*$"')()).toBe(true)
-    expect(match('"bar" =~ "^f.*$"')()).toBe(false)
+    const state = { a: 'foo', b: 'bar' }
 
-    expect(match('"foo" !~ "^f.*$"')()).toBe(false)
-    expect(match('"bar" !~ "^f.*$"')()).toBe(true)
+    expect(match('a =~ "^f.*$"')(state)).toBe(true)
+    expect(match('b =~ "^f.*$"')(state)).toBe(false)
+
+    expect(match('a !~ "^f.*$"')(state)).toBe(false)
+    expect(match('b !~ "^f.*$"')(state)).toBe(true)
   })
 
   it('handles LIKE operator', () => {
-    expect(match('"foo" LIKE "fo*"')()).toBe(true)
-    expect(match('"bar" LIKE "fo*"')()).toBe(false)
+    const state = { a: 'foo', b: 'bar' }
+
+    expect(match('a LIKE "fo*"')(state)).toBe(true)
+    expect(match('b LIKE "fo*"')(state)).toBe(false)
   })
 
   describe('handles CONTAINS operator', () => {
     it('with a string', () => {
-      expect(match('"foo" CONTAINS "f"')()).toBe(true)
-      expect(match('"bar" CONTAINS "f"')()).toBe(false)
+      const state = { a: 'foo', b: 'bar' }
+
+      expect(match('a CONTAINS "f"')(state)).toBe(true)
+      expect(match('b CONTAINS "f"')(state)).toBe(false)
     })
 
     it('with an array', () => {
-      expect(match('["foo"] CONTAINS "foo"')()).toBe(true)
-      expect(match('["bar"] CONTAINS "foo"')()).toBe(false)
+      const state = { a: ['foo'], b: ['bar'] }
+
+      expect(match('a CONTAINS "foo"')(state)).toBe(true)
+      expect(match('b CONTAINS "foo"')(state)).toBe(false)
     })
 
     it('with an object', () => {
+      const state = { a: { b: 1 } }
+
       expect(match('a CONTAINS "b"')(state)).toBe(true)
-      expect(match('a CONTAINS "foo"')(state)).toBe(false)
+      expect(match('a CONTAINS "c"')(state)).toBe(false)
     })
+  })
+
+  it('handles compound expressions', () => {
+    const state = { a: 1, b: 2, c: 3 }
+
+    expect(match('a + b + c = 1 + (2 + 3)')(state)).toBe(true)
+    expect(match('c - b < c - a')(state)).toBe(true)
   })
 })

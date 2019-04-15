@@ -57,10 +57,10 @@
 
 /* operator associations and precedence */
 
-%left DOT
-%left '+' '-' '*' '/'
 %left '=' '!=' '=~' '!~'
-%left '<=' '>=' '<' '>'
+%left '<' '<=' '>' '>='
+%left '+' '-'
+%left '*' '/'
 %left AND OR
 %left NOT
 %left CONTAINS LIKE
@@ -87,26 +87,26 @@ e
         {$$ = $1 + " && " + $3;}
     | e OR e
         {$$ = $1 + " || " + $3;}
-    | value '=' value
-        {$$ = $1 + "==" + $3;}
-    | value '!=' value
-        {$$ = $1 + "!=" + $3;}
-    | value '<=' value
+    | e '=' e
+        {$$ = $1 + "===" + $3;}
+    | e '!=' e
+        {$$ = $1 + "!==" + $3;}
+    | e '<=' e
         {$$ = $1 + $2 + $3;}
-    | value '>=' value
+    | e '>=' e
         {$$ = $1 + $2 + $3;}
-    | value '<' value
+    | e '<' e
         {$$ = $1 + $2 + $3;}
-    | value '>' value
+    | e '>' e
         {$$ = $1 + $2 + $3;}
     | e '+' e
-        {$$ = $1 + $3;}
+        {$$ = $1 + $2 + $3;}
     | e '-' e
-        {$$ = $1 - $3;}
+        {$$ = $1 + $2 + $3;}
     | e '*' e
-        {$$ = $1 * $3;}
+        {$$ = $1 + $2 + $3;}
     | e '/' e
-        {$$ = $1 / $3;}
+        {$$ = $1 + $2 + $3;}
     | arrayvalue CONTAINS value
         {$$ = "_helpers['idxof'](" + $1 + "," + $3 + ")";}
     | value CONTAINS value

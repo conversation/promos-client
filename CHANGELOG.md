@@ -4,6 +4,7 @@
 * Add support for accessing properties using bracket notation
 * Update `CONTAINS` operator to support objects
 * Track campaign, group, and promo impressions
+* Fix parsing of arithmetic expressions
 
 ## 1.2.0 (2019-04-11)
 
