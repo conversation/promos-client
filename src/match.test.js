@@ -1,6 +1,13 @@
 import match from './match'
 
 describe('match', () => {
+  const state = {
+    a: { b: { c: 'foo' } },
+    d: 'a',
+    e: 'b',
+    f: 'c'
+  }
+
   it('handles number literals', () => {
     expect(match('1')()).toBe(1)
     expect(match('2')()).toBe(2)
@@ -11,15 +18,30 @@ describe('match', () => {
   })
 
   it('handles variables', () => {
-    const state = { a: 1, b: 2 }
-    expect(match('a')(state)).toBe(1)
-    expect(match('b')(state)).toBe(2)
+    expect(match('a')(state)).toEqual({ b: { c: 'foo' } })
   })
 
-  it('handles properties', () => {
-    const state = { a: { b: 2 } }
-    expect(match('a')(state)).toEqual({ b: 2 })
-    expect(match('a.b')(state)).toBe(2)
+  describe('handles properties', () => {
+    it('with dot notation', () => {
+      expect(match('a.b')(state)).toEqual({ c: 'foo' })
+      expect(match('a.b.c')(state)).toBe('foo')
+    })
+
+    it('with bracket notation', () => {
+      expect(match('a["b"]')(state)).toEqual({ c: 'foo' })
+      expect(match('a["b"]["c"]')(state)).toBe('foo')
+
+      expect(match('a[e]')(state)).toEqual({ c: 'foo' })
+      expect(match('a[e][f]')(state)).toEqual('foo')
+    })
+
+    it('with mixed notation', () => {
+      expect(match('a.b["c"]')(state)).toBe('foo')
+      expect(match('a["b"].c')(state)).toBe('foo')
+
+      expect(match('a.b[f]')(state)).toBe('foo')
+      expect(match('a[e].c')(state)).toBe('foo')
+    })
   })
 
   it('handles expression grouping', () => {

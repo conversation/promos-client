@@ -1,6 +1,7 @@
 ## Unreleased
 
 * Add support for arithmetic operators
+* Add support for accessing properties using bracket notation
 
 ## 1.2.0 (2019-04-11)
 
