@@ -9,8 +9,8 @@ describe('get', () => {
   it("returns the default user state if it's not in the store", () => {
     const storage = { getItem: jest.fn(() => null) }
     expect(get(storage)).toEqual({
-      blocked: [],
-      impressions: [],
+      blocked: {},
+      impressions: {},
       visits: 0
     })
   })
