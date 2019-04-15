@@ -13,6 +13,7 @@ import sortBy from 'fkit/dist/sortBy'
 import UAParser from 'ua-parser-js'
 
 import match from './match'
+import { timestamp } from './utils'
 
 const PROMO_PROPERTIES = ['creativeId', 'promoId', 'slotId', 'groupId', 'campaignId']
 
@@ -40,6 +41,7 @@ export default function placePromos (promos, user, window) {
     browser: parser.getBrowser(),
     device: parser.getDevice(),
     os: parser.getOS(),
+    timestamp: timestamp(),
     user,
     window
   }
