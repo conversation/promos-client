@@ -6,8 +6,8 @@
  */
 export function get (storage) {
   return JSON.parse(storage.getItem('user')) || {
-    blocked: [],
-    impressions: [],
+    blocked: {},
+    impressions: {},
     visits: 0
   }
 }
