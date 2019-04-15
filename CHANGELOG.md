@@ -1,16 +1,16 @@
-## 1.2.0 (11-04-2019)
+## 1.2.0 (2019-04-11)
 
 * Emit promos from the placement engine
 
-## 1.1.1 (09-04-2019)
+## 1.1.1 (2019-04-09)
 
 * Transpile source files
 
-## 1.1.0 (08-04-2019)
+## 1.1.0 (2019-04-08)
 
 * Remove custom `groupBy` function
 * Refactor placementEngine to return a signal
 
-## 1.0.0 (28-03-2019)
+## 1.0.0 (2019-03-28)
 
 * Initial release
