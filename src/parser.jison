@@ -36,6 +36,10 @@
 ">="                         {return '>=';}
 "<"                          {return '<';}
 ">"                          {return '>';}
+"+"                          {return '+';}
+"-"                          {return '-';}
+"*"                          {return '*';}
+"/"                          {return '/';}
 "contains"|"CONTAINS"        {return 'CONTAINS';}
 "like"|"LIKE"                {return 'LIKE';}
 [\-]?[0-9]+                  {return 'INTEGER';}
@@ -54,6 +58,7 @@
 /* operator associations and precedence */
 
 %left DOT
+%left '+' '-' '*' '/'
 %left '=' '!=' '=~' '!~'
 %left '<=' '>=' '<' '>'
 %left AND OR
@@ -68,6 +73,7 @@ expressions
     : e EOF
         %{ return $1; }
     ;
+
 e
     : TRUE
         {$$ = "true";}
@@ -86,17 +92,25 @@ e
     | value '!=' value
         {$$ = $1 + "!=" + $3;}
     | value '<=' value
-        {$$ = $1 + $2 + $3}
+        {$$ = $1 + $2 + $3;}
     | value '>=' value
-        {$$ = $1 + $2 + $3}
+        {$$ = $1 + $2 + $3;}
     | value '<' value
-        {$$ = $1 + $2 + $3}
+        {$$ = $1 + $2 + $3;}
     | value '>' value
-        {$$ = $1 + $2 + $3}
+        {$$ = $1 + $2 + $3;}
+    | e '+' e
+        {$$ = $1 + $3;}
+    | e '-' e
+        {$$ = $1 - $3;}
+    | e '*' e
+        {$$ = $1 * $3;}
+    | e '/' e
+        {$$ = $1 / $3;}
     | arrayvalue CONTAINS value
-        {$$ = "_helpers['idxof'](" + $1 + "," + $3 + ")"; }
+        {$$ = "_helpers['idxof'](" + $1 + "," + $3 + ")";}
     | value CONTAINS value
-        {$$ = "_helpers['idxof'](" + $1 + "," + $3 + ")"; }
+        {$$ = "_helpers['idxof'](" + $1 + "," + $3 + ")";}
     | value LIKE value
         {$$ = "_helpers['match'](" + $1 + "," + $3 + ")";}
     | value '=~' STRING
@@ -106,6 +120,7 @@ e
     | value
         {$$ = $1;}
     ;
+
 arrayitems
     : INTEGER
         {$$ = $1;}
@@ -116,12 +131,14 @@ arrayitems
     | arrayitems ',' STRING
         {$$ = $1+$2+$3;}
     ;
+
 arrayvalue
     : '[' ']'
         {$$ = $1+$2;}
     | '[' arrayitems ']'
         {$$ = $1+$2+$3;}
     ;
+
 value
     : INTEGER
         {$$ = Number(yytext);}
@@ -130,6 +147,7 @@ value
     | variable
         {$$ = $1;}
     ;
+
 variable
     : VAR
         {$$ = "_env." + yytext;}

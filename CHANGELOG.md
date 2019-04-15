@@ -1,3 +1,7 @@
+## Unreleased
+
+* Add support for arithmetic operators
+
 ## 1.2.0 (2019-04-11)
 
 * Emit promos from the placement engine
