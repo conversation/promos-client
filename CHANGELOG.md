@@ -5,6 +5,9 @@
 * Update `CONTAINS` operator to support objects
 * Track campaign, group, and promo impressions
 * Fix parsing of arithmetic expressions
+* Add `IN` operator
+* Add `NOT IN` operator
+* Remove `CONTAINS` operator
 
 ## 1.2.0 (2019-04-11)
 

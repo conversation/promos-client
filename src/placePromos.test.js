@@ -13,7 +13,7 @@ describe('placePromos', () => {
   const e = { promoId: 5, groupId: 2, constraints: 'user.url = "foo"' }
   const f = { promoId: 6, groupId: 2, constraints: 'user.url = "bar"' }
   const g = { promoId: 8, groupId: 3, constraints: 'browser.name = "Chrome"' }
-  const h = { promoId: 7, groupId: 3, constraints: 'user.blocked CONTAINS promoId' }
+  const h = { promoId: 7, groupId: 3, constraints: 'promoId IN user.blocked' }
   const promos = [a, b, c, d, e, f, g, h]
 
   it('ensures only one promo from each group is placed', () => {

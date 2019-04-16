@@ -8,6 +8,12 @@ describe('match', () => {
 
   it('handles string literals', () => {
     expect(match('"foo"')()).toBe('foo')
+    expect(match('"bar"')()).toBe('bar')
+  })
+
+  it('handles array literals', () => {
+    expect(match('[1, 2]')()).toEqual([1, 2])
+    expect(match('["foo", "bar"]')()).toEqual(['foo', 'bar'])
   })
 
   it('handles variables', () => {
@@ -127,26 +133,45 @@ describe('match', () => {
     expect(match('b LIKE "fo*"')(state)).toBe(false)
   })
 
-  describe('handles CONTAINS operator', () => {
-    it('with a string', () => {
-      const state = { a: 'foo', b: 'bar' }
-
-      expect(match('a CONTAINS "f"')(state)).toBe(true)
-      expect(match('b CONTAINS "f"')(state)).toBe(false)
+  describe('handles IN operator', () => {
+    it('with an array literal', () => {
+      expect(match('"foo" IN ["foo"]')()).toBe(true)
+      expect(match('"foo" IN []')()).toBe(false)
     })
 
-    it('with an array', () => {
+    it('with an array variable', () => {
       const state = { a: ['foo'], b: ['bar'] }
 
-      expect(match('a CONTAINS "foo"')(state)).toBe(true)
-      expect(match('b CONTAINS "foo"')(state)).toBe(false)
+      expect(match('"foo" IN a')(state)).toBe(true)
+      expect(match('"foo" IN b')(state)).toBe(false)
     })
 
-    it('with an object', () => {
+    it('with an object variable', () => {
       const state = { a: { b: 1 } }
 
-      expect(match('a CONTAINS "b"')(state)).toBe(true)
-      expect(match('a CONTAINS "c"')(state)).toBe(false)
+      expect(match('"b" IN a')(state)).toBe(true)
+      expect(match('"c" IN a')(state)).toBe(false)
+    })
+  })
+
+  describe('handles NOT IN operator', () => {
+    it('with an array literal', () => {
+      expect(match('"foo" NOT IN ["foo"]')()).toBe(false)
+      expect(match('"foo" NOT IN []')()).toBe(true)
+    })
+
+    it('with an array variable', () => {
+      const state = { a: ['foo'], b: ['bar'] }
+
+      expect(match('"foo" NOT IN a')(state)).toBe(false)
+      expect(match('"foo" NOT IN b')(state)).toBe(true)
+    })
+
+    it('with an object variable', () => {
+      const state = { a: { b: 1 } }
+
+      expect(match('"b" NOT IN a')(state)).toBe(false)
+      expect(match('"c" NOT IN a')(state)).toBe(true)
     })
   })
 
