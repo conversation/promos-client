@@ -1,7 +1,10 @@
-.PHONY: clean dist lint node_modules publish release test watch
+.PHONY: clean dist lint node_modules parser publish release test watch
 
 node_modules:
 	@npm install
+
+parser:
+	@npx jison src/parser.jison -o src/parser.js -m commonjs
 
 dist:
 	@npx babel --copy-files --out-dir dist src
