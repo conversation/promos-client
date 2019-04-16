@@ -72,14 +72,14 @@ predicate
   | expr '-' expr { $$ = $1 + $2 + $3; }
   | expr '*' expr { $$ = $1 + $2 + $3; }
   | expr '/' expr { $$ = $1 + $2 + $3; }
-  | value IN value { $$ = "_helpers['idxof'](" + $3 + "," + $1 + ")"; }
-  | value NOT IN value { $$ = "!_helpers['idxof'](" + $4 + "," + $1 + ")"; }
-  | value LIKE value { $$ = "_helpers['match'](" + $1 + "," + $3 + ")"; }
+  | value IN value { $$ = "_helpers['has'](" + $3 + "," + $1 + ")"; }
+  | value NOT IN value { $$ = "!_helpers['has'](" + $4 + "," + $1 + ")"; }
+  | value LIKE value { $$ = "_helpers['like'](" + $1 + "," + $3 + ")"; }
   | value '=~' STRING {
-    $$ = "_helpers['regex'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")";
+    $$ = "_helpers['match'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")";
   }
   | value '!~' STRING {
-    $$ = "!_helpers['regex'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")";
+    $$ = "!_helpers['match'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")";
   }
   ;
 
@@ -116,13 +116,13 @@ array_literal
   ;
 
 variable
-  : IDENTIFIER { $$ = "_env." + yytext; }
+  : IDENTIFIER { $$ = "_context." + yytext; }
   | variable '.' IDENTIFIER { $$ = "(" + $1 + "||{})." + $3; }
   | variable '[' value ']' { $$ = "(" + $1 + "||{})[" + $3 + "]"; }
   ;
 
 function
-  : IDENTIFIER '(' value_list ')' { $$ = "_env['" + $1 + "']" + $2 + $3 + $4; }
+  : IDENTIFIER '(' value_list ')' { $$ = "_context['" + $1 + "']" + $2 + $3 + $4; }
   ;
 
 %%
