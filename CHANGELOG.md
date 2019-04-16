@@ -9,6 +9,7 @@
 * Add `NOT IN` operator
 * Remove `CONTAINS` operator
 * Add support for function calls
+* Add `age` function
 
 ## 1.2.0 (2019-04-11)
 
