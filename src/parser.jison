@@ -75,12 +75,9 @@ predicate
   | value IN value { $$ = "_helpers['has'](" + $3 + "," + $1 + ")"; }
   | value NOT IN value { $$ = "!_helpers['has'](" + $4 + "," + $1 + ")"; }
   | value LIKE value { $$ = "_helpers['like'](" + $1 + "," + $3 + ")"; }
-  | value '=~' STRING {
-    $$ = "_helpers['match'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")";
-  }
-  | value '!~' STRING {
-    $$ = "!_helpers['match'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")";
-  }
+  | value NOT LIKE value { $$ = "!_helpers['like'](" + $1 + "," + $4 + ")"; }
+  | value '=~' STRING { $$ = "_helpers['match'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")"; }
+  | value '!~' STRING { $$ = "!_helpers['match'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")"; }
   ;
 
 value

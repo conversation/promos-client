@@ -159,6 +159,13 @@ describe('runQuery', () => {
     expect(runQuery('b LIKE "fo%"', context)).toBe(false)
   })
 
+  it('handles NOT LIKE operator', () => {
+    const context = { a: 'foo', b: 'bar' }
+
+    expect(runQuery('a NOT LIKE "fo%"', context)).toBe(false)
+    expect(runQuery('b NOT LIKE "fo%"', context)).toBe(true)
+  })
+
   describe('handles IN operator', () => {
     it('with an string literal', () => {
       expect(runQuery('"foo" IN "foo"')).toBe(true)
