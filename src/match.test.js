@@ -1,3 +1,5 @@
+import id from 'fkit/dist/id'
+
 import match from './match'
 
 describe('match', () => {
@@ -48,6 +50,12 @@ describe('match', () => {
       expect(match('a.b[f]')(state)).toBe('foo')
       expect(match('a[e].c')(state)).toBe('foo')
     })
+  })
+
+  it('handles function calls', () => {
+    const state = { a: jest.fn(id) }
+    expect(match('a("foo")')(state)).toEqual('foo')
+    expect(state.a).toHaveBeenLastCalledWith('foo')
   })
 
   it('handles equality operators', () => {
