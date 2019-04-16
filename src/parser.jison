@@ -1,160 +1,123 @@
-/**
- * The parser definition is derived from the Adzerk zerkel query language
- * (https://github.com/adzerk/zerkel).
- *
- * Copyright (c) 2013 Adzerk, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-/* lexical grammar */
 %lex
+
 %%
-"/*"(.|\r|\n)*?"*/"          {/* skip comments*/}
-"//".*($|\r\n|\r|\n)         {/* skip comments*/}
-\s+                          {/* skip whitespace */}
-"true"|"TRUE"                {return 'TRUE';}
-"false"|"FALSE"              {return 'FALSE';}
-"and"|"AND"                  {return 'AND';}
-"or"|"OR"                    {return 'OR';}
-"not"|"NOT"                  {return 'NOT';}
-"=~"                         {return '=~';}
-"!~"                         {return '!~';}
-"="                          {return '=';}
-"!="                         {return '!=';}
-"<="                         {return '<=';}
-">="                         {return '>=';}
-"<"                          {return '<';}
-">"                          {return '>';}
-"+"                          {return '+';}
-"-"                          {return '-';}
-"*"                          {return '*';}
-"/"                          {return '/';}
-"contains"|"CONTAINS"        {return 'CONTAINS';}
-"like"|"LIKE"                {return 'LIKE';}
-[\-]?[0-9]+                  {return 'INTEGER';}
-\"[^\"]*\"                   {return 'STRING';}
-[A-Za-z_$]([A-Za-z0-9_$]+)*  {return 'VAR';}
-"("                          {return '(';}
-")"                          {return ')';}
-"["                          {return '[';}
-"]"                          {return ']';}
-","                          {return ',';}
-"."                          {return '.';}
-<<EOF>>                      {return 'EOF';}
+
+"/*"(.|\r|\n)*?"*/"          { /* skip comments */ }
+"//".*($|\r\n|\r|\n)         { /* skip comments */ }
+\s+                          { /* skip whitespace */ }
+"true"|"TRUE"                { return 'TRUE'; }
+"false"|"FALSE"              { return 'FALSE'; }
+"and"|"AND"                  { return 'AND'; }
+"or"|"OR"                    { return 'OR'; }
+"not"|"NOT"                  { return 'NOT'; }
+"=~"                         { return '=~'; }
+"!~"                         { return '!~'; }
+"="                          { return '='; }
+"!="                         { return '!='; }
+"<="                         { return '<='; }
+">="                         { return '>='; }
+"<"                          { return '<'; }
+">"                          { return '>'; }
+"+"                          { return '+'; }
+"-"                          { return '-'; }
+"*"                          { return '*'; }
+"/"                          { return '/'; }
+"in"|"IN"                    { return 'IN'; }
+"like"|"LIKE"                { return 'LIKE'; }
+[0-9]+(\.[0-9]+)?            { return 'NUMBER'; }
+\"[^\"]*\"                   { return 'STRING'; }
+[A-Za-z_$][A-Za-z0-9_]*      { return 'IDENTIFIER'; }
+"("                          { return '('; }
+")"                          { return ')'; }
+"["                          { return '['; }
+"]"                          { return ']'; }
+","                          { return ','; }
+"."                          { return '.'; }
+<<EOF>>                      { return 'EOF'; }
 
 /lex
 
-/* operator associations and precedence */
-
+%left AND OR
+%left NOT
 %left '=' '!=' '=~' '!~'
 %left '<' '<=' '>' '>='
 %left '+' '-'
 %left '*' '/'
-%left AND OR
-%left NOT
-%left CONTAINS LIKE
 
-%start expressions
+%start expr_list
 
-%% /* language grammar */
+%%
 
-expressions
-    : e EOF
-        %{ return $1; }
-    ;
+expr_list
+  : expr EOF { return $1; }
+  ;
 
-e
-    : TRUE
-        {$$ = "true";}
-    | FALSE
-        {$$ = "false";}
-    | NOT e
-        {$$ = "!" + $2;}
-    | '(' e ')'
-        {$$ = "(" + $2 + ")";}
-    | e AND e
-        {$$ = $1 + " && " + $3;}
-    | e OR e
-        {$$ = $1 + " || " + $3;}
-    | e '=' e
-        {$$ = $1 + "===" + $3;}
-    | e '!=' e
-        {$$ = $1 + "!==" + $3;}
-    | e '<=' e
-        {$$ = $1 + $2 + $3;}
-    | e '>=' e
-        {$$ = $1 + $2 + $3;}
-    | e '<' e
-        {$$ = $1 + $2 + $3;}
-    | e '>' e
-        {$$ = $1 + $2 + $3;}
-    | e '+' e
-        {$$ = $1 + $2 + $3;}
-    | e '-' e
-        {$$ = $1 + $2 + $3;}
-    | e '*' e
-        {$$ = $1 + $2 + $3;}
-    | e '/' e
-        {$$ = $1 + $2 + $3;}
-    | arrayvalue CONTAINS value
-        {$$ = "_helpers['idxof'](" + $1 + "," + $3 + ")";}
-    | value CONTAINS value
-        {$$ = "_helpers['idxof'](" + $1 + "," + $3 + ")";}
-    | value LIKE value
-        {$$ = "_helpers['match'](" + $1 + "," + $3 + ")";}
-    | value '=~' STRING
-        {new RegExp($3.substr(1, $3.length - 2)); $$ = "_helpers['regex'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")";}
-    | value '!~' STRING
-        {new RegExp($3.substr(1, $3.length - 2)); $$ = "!_helpers['regex'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")";}
-    | value
-        {$$ = $1;}
-    ;
+expr
+  : expr AND expr { $$ = $1 + " && " + $3; }
+  | expr OR expr { $$ = $1 + " || " + $3; }
+  | NOT expr { $$ = "!" + $2; }
+  | '(' expr ')' { $$ = $1 + $2 + $3; }
+  | predicate
+  | value
+  ;
 
-arrayitems
-    : INTEGER
-        {$$ = $1;}
-    | STRING
-        {$$ = $1;}
-    | arrayitems ',' INTEGER
-        {$$ = $1+$2+$3;}
-    | arrayitems ',' STRING
-        {$$ = $1+$2+$3;}
-    ;
-
-arrayvalue
-    : '[' ']'
-        {$$ = $1+$2;}
-    | '[' arrayitems ']'
-        {$$ = $1+$2+$3;}
-    ;
+predicate
+  : expr '=' expr { $$ = $1 + "===" + $3; }
+  | expr '!=' expr { $$ = $1 + "!==" + $3; }
+  | expr '<=' expr { $$ = $1 + $2 + $3; }
+  | expr '>=' expr { $$ = $1 + $2 + $3; }
+  | expr '<' expr { $$ = $1 + $2 + $3; }
+  | expr '>' expr { $$ = $1 + $2 + $3; }
+  | expr '+' expr { $$ = $1 + $2 + $3; }
+  | expr '-' expr { $$ = $1 + $2 + $3; }
+  | expr '*' expr { $$ = $1 + $2 + $3; }
+  | expr '/' expr { $$ = $1 + $2 + $3; }
+  | value IN value { $$ = "_helpers['idxof'](" + $3 + "," + $1 + ")"; }
+  | value NOT IN value { $$ = "!_helpers['idxof'](" + $4 + "," + $1 + ")"; }
+  | value LIKE value { $$ = "_helpers['match'](" + $1 + "," + $3 + ")"; }
+  | value '=~' STRING {
+    $$ = "_helpers['regex'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")";
+  }
+  | value '!~' STRING {
+    $$ = "!_helpers['regex'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")";
+  }
+  ;
 
 value
-    : INTEGER
-        {$$ = Number(yytext);}
-    | STRING
-        {$$ = yytext;}
-    | variable
-        {$$ = $1;}
-    ;
+  : number_literal
+  | bool_literal
+  | string_literal
+  | array_literal
+  | variable
+  ;
+
+value_list
+  : value
+  | value_list ',' value { $$ = $1 + $2 + $3; }
+  ;
+
+number_literal
+  : NUMBER { $$ = Number(yytext); }
+  ;
+
+bool_literal
+  : TRUE { $$ = "true"; }
+  | FALSE { $$ = "false"; }
+  ;
+
+string_literal
+  : STRING { $$ = yytext; }
+  ;
+
+array_literal
+  : '[' ']' { $$ = $1 + $2; }
+  | '[' value_list ']' { $$ = $1 + $2 + $3; }
+  ;
 
 variable
-    : VAR
-        {$$ = "_env." + yytext;}
-    | variable '.' VAR
-        {$$ = "(" + $1 + "||{})." + $3;}
-    | variable '[' value ']'
-        {$$ = "(" + $1 + "||{})[" + $3 + "]";}
-    ;
+  : IDENTIFIER { $$ = "_env." + yytext; }
+  | variable '.' IDENTIFIER { $$ = "(" + $1 + "||{})." + $3; }
+  | variable '[' value ']' { $$ = "(" + $1 + "||{})[" + $3 + "]"; }
+  ;
 
 %%
