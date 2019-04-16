@@ -89,6 +89,7 @@ value
   | string_literal
   | array_literal
   | variable
+  | function
   ;
 
 value_list
@@ -118,6 +119,10 @@ variable
   : IDENTIFIER { $$ = "_env." + yytext; }
   | variable '.' IDENTIFIER { $$ = "(" + $1 + "||{})." + $3; }
   | variable '[' value ']' { $$ = "(" + $1 + "||{})[" + $3 + "]"; }
+  ;
+
+function
+  : IDENTIFIER '(' value_list ')' { $$ = "_env['" + $1 + "']" + $2 + $3 + $4; }
   ;
 
 %%
