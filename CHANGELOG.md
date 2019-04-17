@@ -1,3 +1,7 @@
+## Unreleased
+
+* Add `NOT LIKE` operator
+
 ## 2.0.0 (2019-04-16)
 
 * Add support for arithmetic operators

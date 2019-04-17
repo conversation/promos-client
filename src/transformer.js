@@ -7,12 +7,20 @@ import update from 'fkit/dist/update'
 import placePromos from './placePromos'
 import { timestamp } from './utils'
 
-// Increments the number of visits for the given user.
+/**
+ * Increments the number of visits for the given user.
+ *
+ * @private
+ */
 function incrementVisits (user) {
   return update('visits', inc, user)
 }
 
-// Adds the given promo to the list of blocked promos for the user.
+/**
+ * Adds the given promo to the list of blocked promos for the user.
+ *
+ * @private
+ */
 function blockPromo (promo, ts, user) {
   return compose(
     updateEntity(['blocked', 'campaigns', promo.campaignId], ts),
@@ -21,7 +29,11 @@ function blockPromo (promo, ts, user) {
   )(user)
 }
 
-// Tracks the impressions for the given list of promos.
+/**
+ * Tracks the impressions for the given list of promos.
+ *
+ * @private
+ */
 function trackImpressions (promos, ts, user) {
   return promos.reduce((user, promo) => compose(
     updateEntity(['impressions', 'campaigns', promo.campaignId], ts),
@@ -30,7 +42,11 @@ function trackImpressions (promos, ts, user) {
   )(user), user)
 }
 
-// Increments the counter and sets the timestamp for the given entity.
+/**
+ * Increments the counter and sets the timestamp for the given entity.
+ *
+ * @private
+ */
 function updateEntity (keyPath, ts) {
   // Return the identity function (NOOP) if the last element in the key path
   // is falsey.

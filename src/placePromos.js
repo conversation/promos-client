@@ -1,4 +1,4 @@
-import always from 'fkit/dist/always'
+import UAParser from 'ua-parser-js'
 import chunkBy from 'fkit/dist/chunkBy'
 import compare from 'fkit/dist/compare'
 import compose from 'fkit/dist/compose'
@@ -10,12 +10,54 @@ import map from 'fkit/dist/map'
 import pick from 'fkit/dist/pick'
 import sample from 'fkit/dist/sample'
 import sortBy from 'fkit/dist/sortBy'
-import UAParser from 'ua-parser-js'
+import toLower from 'fkit/dist/toLower'
+import toUpper from 'fkit/dist/toUpper'
 
-import match from './match'
-import { age, timestamp } from './utils'
+import runQuery from './runQuery'
+import { age } from './utils'
 
 const PROMO_PROPERTIES = ['creativeId', 'promoId', 'slotId', 'groupId', 'campaignId']
+
+/**
+ * Creates a new context to run a query. The functions and objects in the
+ * context will be available to the query.
+ *
+ * @private
+ */
+function createContext (user, window) {
+  const uaParser = new UAParser(get('navigator.userAgent', window))
+
+  return {
+    // Functions
+    age,
+    lower: toLower,
+    upper: toUpper,
+
+    // Objects
+    browser: uaParser.getBrowser(),
+    device: uaParser.getDevice(),
+    os: uaParser.getOS(),
+    user,
+    window
+  }
+}
+
+/**
+ * Filter the promos that have satisfied constraints.
+ *
+ * @private
+ */
+function filterPromos (context) {
+  return filter(promo => {
+    // The local context adds several properties from the current promo.
+    const localContext = copy(context, pick(PROMO_PROPERTIES, promo))
+
+    // Promos without constraints are passed through.
+    return promo.constraints
+      ? runQuery(promo.constraints, localContext)
+      : true
+  })
+}
 
 /**
  * Filters promos based on which promo constraints are satisfied by the client
@@ -33,30 +75,11 @@ const PROMO_PROPERTIES = ['creativeId', 'promoId', 'slotId', 'groupId', 'campaig
  * @returns {Array} The list of placed promos.
  */
 export default function placePromos (promos, user, window) {
-  const parser = new UAParser(get('navigator.userAgent', window))
+  // Create a new context.
+  const context = createContext(user, window)
 
-  // The client state object used to match promo constraints. This object
-  // should contain everything we want to match against.
-  const clientState = {
-    age,
-    browser: parser.getBrowser(),
-    device: parser.getDevice(),
-    os: parser.getOS(),
-    timestamp: timestamp(),
-    user,
-    window
-  }
-
-  // Filter the promos that have matching constraints.
-  const f = filter(promo => {
-    // Promos without constraints are passed through.
-    const predicate = promo.constraints ? match(promo.constraints) : always(true)
-
-    // Include several properties from the promo in the client state.
-    const clientState_ = copy(clientState, pick(PROMO_PROPERTIES, promo))
-
-    return predicate(clientState_)
-  })
+  // Filter the promos.
+  const f = filterPromos(context)
 
   // Sort the promos by group.
   const g = sortBy((a, b) => compare(a.groupId, b.groupId))
