@@ -1,6 +1,7 @@
-## Unreleased
+## 2.1.0 (2019-04-17)
 
 * Add `NOT LIKE` operator
+* Refactor parser
 
 ## 2.0.0 (2019-04-16)
 
