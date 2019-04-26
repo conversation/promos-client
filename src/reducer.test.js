@@ -61,27 +61,55 @@ describe('reducer', () => {
     })
   })
 
+  describe('with a click event', () => {
+    const event = {
+      type: 'click',
+      promo: { promoId: 1, groupId: 1, campaignId: 1 }
+    }
+
+    it('updates the campaign engagements', () => {
+      const result = reducer(context, state, event)
+      expect(result).toHaveProperty('user.engagements.campaigns', {
+        1: { count: 1, timestamp: '123' }
+      })
+    })
+
+    it('updates the group engagements', () => {
+      const result = reducer(context, state, event)
+      expect(result).toHaveProperty('user.engagements.groups', {
+        1: { count: 1, timestamp: '123' }
+      })
+    })
+
+    it('updates the promo engagements', () => {
+      const result = reducer(context, state, event)
+      expect(result).toHaveProperty('user.engagements.promos', {
+        1: { count: 1, timestamp: '123' }
+      })
+    })
+  })
+
   describe('with a close event', () => {
     const event = {
       type: 'close',
       promo: { promoId: 1, groupId: 1, campaignId: 1 }
     }
 
-    it('adds the campaign to the list of blocked promos', () => {
+    it('updates the blocked campaigns', () => {
       const result = reducer(context, state, event)
       expect(result).toHaveProperty('user.blocked.campaigns', {
         1: { count: 1, timestamp: '123' }
       })
     })
 
-    it('adds the group to the list of blocked promos', () => {
+    it('updates the blocked groups', () => {
       const result = reducer(context, state, event)
       expect(result).toHaveProperty('user.blocked.groups', {
         1: { count: 1, timestamp: '123' }
       })
     })
 
-    it('adds the promo to the list of blocked promos', () => {
+    it('updates the blocked promos', () => {
       const result = reducer(context, state, event)
       expect(result).toHaveProperty('user.blocked.promos', {
         1: { count: 1, timestamp: '123' }

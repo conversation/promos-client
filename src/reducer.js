@@ -44,6 +44,19 @@ function trackImpressions (promos, ts, user) {
 }
 
 /**
+ * Tracks the engagements for the given promo.
+ *
+ * @private
+ */
+function trackEngagements (promo, ts, user) {
+  return compose(
+    updateEntity(['engagements', 'campaigns', promo.campaignId], ts),
+    updateEntity(['engagements', 'groups', promo.groupId], ts),
+    updateEntity(['engagements', 'promos', promo.promoId], ts)
+  )(user)
+}
+
+/**
  * Increments the counter and sets the timestamp for the given entity.
  *
  * @private
@@ -78,6 +91,9 @@ function reducer (context, state, event) {
   if (event.type === 'visit') {
     // Increment the number of user visits.
     user = incrementVisits(user)
+  } else if (event.type === 'click') {
+    // Add promo to the list of engagements.
+    user = trackEngagements(event.promo, ts, user)
   } else if (event.type === 'close') {
     // Add promo to the list of blocked promos.
     user = blockPromo(event.promo, ts, user)
