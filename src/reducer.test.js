@@ -17,7 +17,6 @@ describe('reducer', () => {
     { promoId: 2, groupId: 1, campaignId: 1 },
     { promoId: 3, campaignId: 1 }
   ]
-  const context = { window, promos }
 
   beforeEach(() => {
     state = {
@@ -37,13 +36,13 @@ describe('reducer', () => {
 
     it('updates the promos', () => {
       expect(state).toHaveProperty('promos', [])
-      state = reducer(context, state, event)
+      state = reducer(promos, window, state, event)
       expect(state).toHaveProperty('promos', promos)
     })
 
     it('updates the campaign impressions', () => {
       expect(state).not.toHaveProperty('user.impressions.campaigns')
-      state = reducer(context, state, event)
+      state = reducer(promos, window, state, event)
       expect(state).toHaveProperty('user.impressions.campaigns', {
         1: { count: 3, timestamp: '123' }
       })
@@ -51,7 +50,7 @@ describe('reducer', () => {
 
     it('updates the group impressions', () => {
       expect(state).not.toHaveProperty('user.impressions.groups')
-      state = reducer(context, state, event)
+      state = reducer(promos, window, state, event)
       expect(state).toHaveProperty('user.impressions.groups', {
         1: { count: 2, timestamp: '123' }
       })
@@ -59,7 +58,7 @@ describe('reducer', () => {
 
     it('updates the promo impressions', () => {
       expect(state).not.toHaveProperty('user.impressions.promos')
-      state = reducer(context, state, event)
+      state = reducer(promos, window, state, event)
       expect(state).toHaveProperty('user.impressions.promos', {
         1: { count: 1, timestamp: '123' },
         2: { count: 1, timestamp: '123' },
@@ -73,7 +72,7 @@ describe('reducer', () => {
 
     it('increments the number of visits', () => {
       expect(state).toHaveProperty('user.visits', 1)
-      state = reducer(context, state, event)
+      state = reducer(promos, window, state, event)
       expect(state).toHaveProperty('user.visits', 2)
     })
   })
@@ -86,7 +85,7 @@ describe('reducer', () => {
 
     it('updates the campaign engagements', () => {
       expect(state).not.toHaveProperty('user.engagements.campaigns')
-      state = reducer(context, state, event)
+      state = reducer(promos, window, state, event)
       expect(state).toHaveProperty('user.engagements.campaigns', {
         1: { count: 1, timestamp: '123' }
       })
@@ -94,7 +93,7 @@ describe('reducer', () => {
 
     it('updates the group engagements', () => {
       expect(state).not.toHaveProperty('user.engagements.groups')
-      state = reducer(context, state, event)
+      state = reducer(promos, window, state, event)
       expect(state).toHaveProperty('user.engagements.groups', {
         1: { count: 1, timestamp: '123' }
       })
@@ -102,7 +101,7 @@ describe('reducer', () => {
 
     it('updates the promo engagements', () => {
       expect(state).not.toHaveProperty('user.engagements.promos')
-      state = reducer(context, state, event)
+      state = reducer(promos, window, state, event)
       expect(state).toHaveProperty('user.engagements.promos', {
         1: { count: 1, timestamp: '123' }
       })
@@ -117,7 +116,7 @@ describe('reducer', () => {
 
     it('updates the blocked campaigns', () => {
       expect(state).not.toHaveProperty('user.blocked.campaigns')
-      state = reducer(context, state, event)
+      state = reducer(promos, window, state, event)
       expect(state).toHaveProperty('user.blocked.campaigns', {
         1: { count: 1, timestamp: '123' }
       })
@@ -125,7 +124,7 @@ describe('reducer', () => {
 
     it('updates the blocked groups', () => {
       expect(state).not.toHaveProperty('user.blocked.groups')
-      state = reducer(context, state, event)
+      state = reducer(promos, window, state, event)
       expect(state).toHaveProperty('user.blocked.groups', {
         1: { count: 1, timestamp: '123' }
       })
@@ -133,7 +132,7 @@ describe('reducer', () => {
 
     it('updates the blocked promos', () => {
       expect(state).not.toHaveProperty('user.blocked.promos')
-      state = reducer(context, state, event)
+      state = reducer(promos, window, state, event)
       expect(state).toHaveProperty('user.blocked.promos', {
         1: { count: 1, timestamp: '123' }
       })
