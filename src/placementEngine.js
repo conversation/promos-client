@@ -1,6 +1,6 @@
 import Bus from 'bulb/dist/Bus'
 
-import transformer from './transformer'
+import reducer from './reducer'
 import { get, set } from './userState'
 
 /**
@@ -30,8 +30,8 @@ export default function placementEngine (promos, window) {
     // Emit an initial `visit` event on the bus.
     .startWith({ type: 'visit' })
 
-    // Scan the transform function over the events emitted on the bus.
-    .scan(transformer, initialState)
+    // Scan the reducer function over the events emitted on the bus.
+    .scan(reducer, initialState)
 
     // Store the user state as a side effect.
     .tap(({ user, window }) => set(window.localStorage, user))

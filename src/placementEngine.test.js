@@ -6,7 +6,7 @@ jest.mock('./userState', () => ({
   set: jest.fn()
 }))
 
-jest.mock('./transformer', () => jest.fn(a => a))
+jest.mock('./reducer', () => jest.fn(a => a))
 
 describe('placePromos', () => {
   it('calls the callback', done => {

@@ -62,13 +62,13 @@ function updateEntity (keyPath, ts) {
 }
 
 /**
- * Applies the given event to yield a new state.
+ * Applies an event to the current state to yield a new state.
  *
- * @param {Object} state The state object.
+ * @param {Object} state The current state.
  * @param {Object} event The event.
  * @returns A new state.
  */
-export default function transformer (state, event) {
+export default function reducer (state, event) {
   let { promos, user, window } = state
   const ts = timestamp()
 
