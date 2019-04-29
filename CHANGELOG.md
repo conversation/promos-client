@@ -1,3 +1,7 @@
+## Unreleased
+
+* Fix an issue where the placementEngine was initially emitting _all_ promos to subscribers, before filtering them
+
 ## 2.1.0 (2019-04-17)
 
 * Add `NOT LIKE` operator

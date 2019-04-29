@@ -22,7 +22,7 @@ export default function placementEngine (promos, window) {
 
   // Create the initial state object. Every time an event is emitted on the
   // bus, a new state will be generated.
-  const initialState = { promos, user, window }
+  const initialState = { promos: [], user, window }
 
   // The state signal emits the current placement engine state whenever an
   // event is emitted on the bus.
