@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 2.1.2 (2019-04-29)
+
 * Refactor reducer to accept a context argument
 
 ## 2.1.1 (2019-04-29)
