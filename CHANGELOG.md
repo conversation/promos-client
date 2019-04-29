@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 2.1.1 (2019-04-29)
+
 * Fix an issue where the placementEngine was initially emitting _all_ promos to subscribers, before filtering them
 
 ## 2.1.0 (2019-04-17)
