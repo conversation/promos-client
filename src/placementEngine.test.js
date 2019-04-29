@@ -6,7 +6,7 @@ jest.mock('./userState', () => ({
   set: jest.fn()
 }))
 
-jest.mock('./reducer', () => jest.fn(a => a))
+jest.mock('./reducer', () => jest.fn(context => state => state))
 
 describe('placePromos', () => {
   it('initially calls the callback with an empty array', done => {

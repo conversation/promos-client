@@ -22,7 +22,7 @@ export default function placementEngine (promos, window) {
 
   // Create the initial state object. Every time an event is emitted on the
   // bus, a new state will be generated.
-  const initialState = { promos: [], user, window }
+  const initialState = { promos: [], user }
 
   // The state signal emits the current placement engine state whenever an
   // event is emitted on the bus.
@@ -31,12 +31,12 @@ export default function placementEngine (promos, window) {
     .startWith({ type: 'visit' })
 
     // Scan the reducer function over the events emitted on the bus.
-    .scan(reducer, initialState)
+    .scan(reducer({ window, promos }), initialState)
 
     // Store the user state as a side effect.
-    .tap(({ user, window }) => set(window.localStorage, user))
+    .tap(({ user }) => set(window.localStorage, user))
 
-    // Emit the placed promos and onClose callback.
+    // Emit the placed promos and callback functions.
     .map(({ promos }) => ({ promos, onClose }))
 
   return stateSignal

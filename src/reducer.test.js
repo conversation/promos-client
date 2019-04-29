@@ -10,12 +10,14 @@ jest.mock('./utils', () => ({
 }))
 
 describe('reducer', () => {
+  const promos = [
+    { promoId: 1, groupId: 1, campaignId: 1 },
+    { promoId: 2, groupId: 1, campaignId: 1 },
+    { promoId: 3, campaignId: 1 }
+  ]
+  const context = { window, promos }
   const state = {
-    promos: [
-      { promoId: 1, groupId: 1, campaignId: 1 },
-      { promoId: 2, groupId: 1, campaignId: 1 },
-      { promoId: 3, campaignId: 1 }
-    ],
+    promos: [],
     user: {
       blocked: {},
       impressions: {},
@@ -28,21 +30,21 @@ describe('reducer', () => {
     const event = {}
 
     it('updates the campaign impressions', () => {
-      const result = reducer(state, event)
+      const result = reducer(context, state, event)
       expect(result).toHaveProperty('user.impressions.campaigns', {
         1: { count: 3, timestamp: '123' }
       })
     })
 
     it('updates the group impressions', () => {
-      const result = reducer(state, event)
+      const result = reducer(context, state, event)
       expect(result).toHaveProperty('user.impressions.groups', {
         1: { count: 2, timestamp: '123' }
       })
     })
 
     it('updates the promo impressions', () => {
-      const result = reducer(state, event)
+      const result = reducer(context, state, event)
       expect(result).toHaveProperty('user.impressions.promos', {
         1: { count: 1, timestamp: '123' },
         2: { count: 1, timestamp: '123' },
@@ -54,7 +56,7 @@ describe('reducer', () => {
   describe('with a visit event', () => {
     it('increments the number of visits', () => {
       const event = { type: 'visit' }
-      const result = reducer(state, event)
+      const result = reducer(context, state, event)
       expect(result).toHaveProperty('user.visits', 2)
     })
   })
@@ -66,21 +68,21 @@ describe('reducer', () => {
     }
 
     it('adds the campaign to the list of blocked promos', () => {
-      const result = reducer(state, event)
+      const result = reducer(context, state, event)
       expect(result).toHaveProperty('user.blocked.campaigns', {
         1: { count: 1, timestamp: '123' }
       })
     })
 
     it('adds the group to the list of blocked promos', () => {
-      const result = reducer(state, event)
+      const result = reducer(context, state, event)
       expect(result).toHaveProperty('user.blocked.groups', {
         1: { count: 1, timestamp: '123' }
       })
     })
 
     it('adds the promo to the list of blocked promos', () => {
-      const result = reducer(state, event)
+      const result = reducer(context, state, event)
       expect(result).toHaveProperty('user.blocked.promos', {
         1: { count: 1, timestamp: '123' }
       })
