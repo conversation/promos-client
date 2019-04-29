@@ -1,4 +1,5 @@
 import compose from 'fkit/dist/compose'
+import curry from 'fkit/dist/curry'
 import id from 'fkit/dist/id'
 import inc from 'fkit/dist/inc'
 import last from 'fkit/dist/last'
@@ -64,13 +65,15 @@ function updateEntity (keyPath, ts) {
 /**
  * Applies an event to the current state to yield a new state.
  *
+ * @param {Object} context The context object.
  * @param {Object} state The current state.
  * @param {Object} event The event.
  * @returns A new state.
  */
-export default function reducer (state, event) {
-  let { promos, user, window } = state
+function reducer (context, state, event) {
   const ts = timestamp()
+  let { window, promos } = context
+  let { user } = state
 
   if (event.type === 'visit') {
     // Increment the number of user visits.
@@ -80,11 +83,13 @@ export default function reducer (state, event) {
     user = blockPromo(event.promo, ts, user)
   }
 
-  // Recalculate the placed promos.
-  promos = placePromos(promos, user, window)
+  // Place the promos.
+  const placedPromos = placePromos(promos, user, window)
 
-  // Add promos to the list of impressions.
-  user = trackImpressions(promos, ts, user)
+  // Track the impressions for the recently placed promos.
+  user = trackImpressions(placedPromos, ts, user)
 
-  return { promos, user, window }
+  return { promos: placedPromos, user }
 }
+
+export default curry(reducer)
