@@ -17,6 +17,9 @@ export default function placementEngine (promos, window) {
   // Create the bus signal.
   const bus = new Bus()
 
+  // A function that emits a `click` event on the bus.
+  const onClick = promo => bus.next({ type: 'click', promo })
+
   // A function that emits a `close` event on the bus.
   const onClose = promo => bus.next({ type: 'close', promo })
 
@@ -31,13 +34,13 @@ export default function placementEngine (promos, window) {
     .startWith({ type: 'visit' })
 
     // Scan the reducer function over the events emitted on the bus.
-    .scan(reducer({ window, promos }), initialState)
+    .scan((state, event) => reducer(promos, window, state, event), initialState)
 
     // Store the user state as a side effect.
     .tap(({ user }) => set(window.localStorage, user))
 
     // Emit the placed promos and callback functions.
-    .map(({ promos }) => ({ promos, onClose }))
+    .map(({ promos }) => ({ promos, onClick, onClose }))
 
   return stateSignal
 }

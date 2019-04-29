@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Pass `onClick` function to placement engine subscribers
+
 ## 2.1.2 (2019-04-29)
 
 * Refactor reducer to accept a context argument
