@@ -1,4 +1,4 @@
-## Unreleased
+## 2.2.0 (2019-04-29)
 
 * Pass `onClick` function to placement engine subscribers
 
