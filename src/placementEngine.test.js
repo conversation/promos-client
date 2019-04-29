@@ -9,8 +9,9 @@ jest.mock('./userState', () => ({
 jest.mock('./reducer', () => jest.fn(a => a))
 
 describe('placePromos', () => {
-  it('calls the callback', done => {
-    placementEngine([], window)
+  it('initially calls the callback with an empty array', done => {
+    const promos = [{ promoid: 1 }]
+    placementEngine(promos, window)
       .subscribe(({ promos }) => {
         expect(promos).toEqual([])
         done()
