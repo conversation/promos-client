@@ -1,38 +1,37 @@
-import { get, set } from './userState'
 import placementEngine from './placementEngine'
-import reducer from './reducer'
+import stateMachine from './stateMachine'
+import { get } from './userState'
 
-jest.mock('./userState', () => ({
-  get: jest.fn(),
-  set: jest.fn()
-}))
-
-jest.mock('./reducer', () => jest.fn((promos, window, state, event) => state))
+jest.mock('./stateMachine', () => jest.fn())
+jest.mock('./userState', () => ({ get: jest.fn() }))
 
 describe('placementEngine', () => {
   const user = { visits: 1 }
+  const promo = { promoid: 1 }
+  const promos = [promo]
 
   get.mockReturnValue(user)
 
-  it('initially calls the callback with an empty array', done => {
-    const promos = [{ promoid: 1 }]
-    placementEngine(promos, window)
-      .subscribe(({ promos }) => {
-        expect(promos).toEqual([])
-        done()
-      })
+  const innerMock = jest.fn((state, event, emit) => {
+    emit.next({ promos })
+    return state
   })
 
-  it('loads and stores the user state', done => {
+  // The stateMachine function is curried, so we need to return the inner mocked
+  // function.
+  stateMachine.mockImplementation(() => innerMock)
+
+  it('emits an initial init event to the state machine', done => {
     placementEngine([], window)
-      .subscribe(() => {
-        expect(set).toHaveBeenLastCalledWith(window.localStorage, user)
+      .subscribe(state => {
+        expect(state.promos).toEqual(promos)
+        expect(stateMachine).toHaveBeenLastCalledWith([], window)
+        expect(innerMock).toHaveBeenLastCalledWith({ user }, { type: 'visit' }, expect.anything())
         done()
       })
   })
 
-  it('handles the onClick and onClose callbacks', done => {
-    const promo = { promoid: 1 }
+  it('handles the onClick/onClose callbacks', done => {
     let onClick, onClose
 
     placementEngine([], window)
@@ -42,11 +41,12 @@ describe('placementEngine', () => {
       })
 
     setTimeout(() => {
-      expect(reducer).toHaveBeenLastCalledWith([], window, { promos: [], user }, { type: 'visit' })
       onClick(promo)
-      expect(reducer).toHaveBeenLastCalledWith([], window, { promos: [], user }, { type: 'click', promo })
+      expect(innerMock).toHaveBeenLastCalledWith({ user }, { type: 'click', promo }, expect.anything())
+
       onClose(promo)
-      expect(reducer).toHaveBeenLastCalledWith([], window, { promos: [], user }, { type: 'close', promo })
+      expect(innerMock).toHaveBeenLastCalledWith({ user }, { type: 'close', promo }, expect.anything())
+
       done()
     }, 0)
   })
