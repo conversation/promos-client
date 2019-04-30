@@ -1,3 +1,7 @@
+## 3.0.0 (2019-04-30)
+
+* Fix an issue where the placement engine was emitting promos for every event
+
 ## 2.2.0 (2019-04-29)
 
 * Pass `onClick` function to placement engine subscribers
@@ -8,7 +12,7 @@
 
 ## 2.1.1 (2019-04-29)
 
-* Fix an issue where the placementEngine was initially emitting _all_ promos to subscribers, before filtering them
+* Fix an issue where the placement engine was initially emitting _all_ promos to subscribers, before filtering them
 
 ## 2.1.0 (2019-04-17)
 
