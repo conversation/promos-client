@@ -1,7 +1,7 @@
 import Bus from 'bulb/dist/Bus'
 
-import reducer from './reducer'
-import { get, set } from './userState'
+import stateMachine from './stateMachine'
+import { get } from './userState'
 
 /**
  * The placement engine is responsible for placing the given promos into slots.
@@ -23,9 +23,8 @@ export default function placementEngine (promos, window) {
   // A function that emits a `close` event on the bus.
   const onClose = promo => bus.next({ type: 'close', promo })
 
-  // Create the initial state object. Every time an event is emitted on the
-  // bus, a new state will be generated.
-  const initialState = { promos: [], user }
+  // Create the initial state object.
+  const initialState = { user }
 
   // The state signal emits the current placement engine state whenever an
   // event is emitted on the bus.
@@ -33,11 +32,8 @@ export default function placementEngine (promos, window) {
     // Emit an initial `visit` event on the bus.
     .startWith({ type: 'visit' })
 
-    // Scan the reducer function over the events emitted on the bus.
-    .scan((state, event) => reducer(promos, window, state, event), initialState)
-
-    // Store the user state as a side effect.
-    .tap(({ user }) => set(window.localStorage, user))
+    // Run the state machine function over the events emitted on the bus.
+    .stateMachine(stateMachine(promos, window), initialState)
 
     // Emit the placed promos and callback functions.
     .map(({ promos }) => ({ promos, onClick, onClose }))

@@ -1,10 +1,12 @@
 import compose from 'fkit/dist/compose'
+import curry from 'fkit/dist/curry'
 import id from 'fkit/dist/id'
 import inc from 'fkit/dist/inc'
 import last from 'fkit/dist/last'
 import update from 'fkit/dist/update'
 
 import placePromos from './placePromos'
+import { set } from './userState'
 import { timestamp } from './utils'
 
 /**
@@ -81,15 +83,27 @@ function updateEntity (keyPath, ts) {
  * @param {Window} window The window object.
  * @param {Object} state The current state.
  * @param {Object} event The event.
+ * @param {Object} emit The emitter object.
  * @returns A new state.
  */
-function reducer (promos, window, state, event) {
+const stateMachine = (promos, window) => ({ user }, event, emit) => {
   const ts = timestamp()
-  let { user } = state
 
   if (event.type === 'visit') {
     // Increment the number of user visits.
     user = incrementVisits(user)
+
+    // Place the promos.
+    const placedPromos = placePromos(promos, user, window)
+
+    // Track the impressions for the placed promos.
+    user = trackImpressions(placedPromos, ts, user)
+
+    // This is where the promos are actually emitted. i.e. They will only be
+    // emitted on the initial `visit` event. Any other events will not trigger
+    // the promos to be placed again (although they will update the internal
+    // user state object).
+    emit.next({ promos: placedPromos })
   } else if (event.type === 'click') {
     // Add promo to the list of engagements.
     user = trackEngagements(event.promo, ts, user)
@@ -98,13 +112,10 @@ function reducer (promos, window, state, event) {
     user = blockPromo(event.promo, ts, user)
   }
 
-  // Place the promos.
-  const placedPromos = placePromos(promos, user, window)
+  // Store the user state as a side effect.
+  set(window.localStorage, user)
 
-  // Track the impressions for the recently placed promos.
-  user = trackImpressions(placedPromos, ts, user)
-
-  return { promos: placedPromos, user }
+  return { user }
 }
 
-export default reducer
+export default curry(stateMachine)
