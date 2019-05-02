@@ -6,7 +6,7 @@ jest.mock('./placePromos', () => jest.fn(context => promos => promos))
 
 jest.mock('./userState', () => ({
   get: jest.fn(),
-  set: jest.fn()
+  set: jest.fn((window, user) => user)
 }))
 
 // Mock the timestamp function.
@@ -19,14 +19,14 @@ describe('placementEngine', () => {
     { promoId: 3, campaignId: 1 }
   ]
 
-  const state = {
+  const user = {
     blocked: {},
     impressions: {},
     engagements: {},
     visits: 0
   }
 
-  get.mockReturnValue(state)
+  get.mockReturnValue(user)
 
   it('returns a promise that resolves the placed promos', () => {
     const result = placementEngine(promos, window)

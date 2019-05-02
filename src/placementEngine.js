@@ -80,29 +80,25 @@ function incrementCounter (keyPath, ts) {
  * @returns {Promise} A promise.
  */
 export default function placementEngine (candidatePromos, window) {
-  const user = get(window.localStorage)
   const updateUser = (f, user) => set(window.localStorage, f(user))
+  let user = updateUser(incrementVisits, get(window.localStorage))
 
   const onClick = promo => {
-    const user = get(window.localStorage)
     const f = trackEngagement(promo, timestamp())
     updateUser(f, user)
   }
 
   const onClose = promo => {
-    const user = get(window.localStorage)
     const f = blockPromo(promo, timestamp())
     updateUser(f, user)
   }
 
   const onView = promo => {
-    const user = get(window.localStorage)
     const f = trackImpression(promo, timestamp())
     updateUser(f, user)
   }
 
-  const context = { user: updateUser(incrementVisits, user), window }
-
+  const context = { user, window }
   const promos = placePromos(context)(candidatePromos)
 
   // Return a promise containing the placed promos, and the callback functions.
