@@ -75,11 +75,11 @@ function incrementCounter (keyPath, ts) {
  * The placement engine returns a promise that resolves to an object containing
  * the placed promos and the callback functions.
  *
- * @param {Array} promos The list of the candidate promos.
+ * @param {Array} candidatePromos The list of the candidate promos.
  * @param {Window} window The window object.
  * @returns {Promise} A promise.
  */
-export default function placementEngine (promos, window) {
+export default function placementEngine (candidatePromos, window) {
   const user = get(window.localStorage)
   const updateUser = (f, user) => set(window.localStorage, f(user))
 
@@ -103,11 +103,8 @@ export default function placementEngine (promos, window) {
 
   const context = { user: updateUser(incrementVisits, user), window }
 
+  const promos = placePromos(context)(candidatePromos)
+
   // Return a promise containing the placed promos, and the callback functions.
-  return Promise.resolve({
-    promos: placePromos(context)(promos),
-    onClick,
-    onClose,
-    onView
-  })
+  return Promise.resolve({ promos, onClick, onClose, onView })
 }
