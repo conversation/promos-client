@@ -1,42 +1,113 @@
-import Bus from 'bulb/dist/Bus'
+import id from 'fkit/dist/id'
+import inc from 'fkit/dist/inc'
+import last from 'fkit/dist/last'
+import pipe from 'fkit/dist/pipe'
+import update from 'fkit/dist/update'
 
-import stateMachine from './stateMachine'
-import { get } from './userState'
+import placePromos from './placePromos'
+import { get, set } from './userState'
+import { timestamp } from './utils'
 
 /**
- * The placement engine is responsible for placing the given promos into slots.
+ * Updates the counters for the given target.
  *
- * @param {Array} promos The list of promos.
+ * @private
+ */
+const updateCounters = (target) => (promo, ts) => pipe(
+  incrementCounter([target, 'campaigns', promo.campaignId], ts),
+  incrementCounter([target, 'groups', promo.groupId], ts),
+  incrementCounter([target, 'promos', promo.promoId], ts)
+)
+
+/**
+ * Increments the number of visits for the given user.
+ *
+ * @private
+ */
+const incrementVisits = update('visits', inc)
+
+/**
+ * Adds the given promo to the list of blocked promos for the user.
+ *
+ * @private
+ */
+const blockPromo = updateCounters('blocked')
+
+/**
+ * Tracks an impression for the given promo.
+ *
+ * @private
+ */
+const trackImpression = updateCounters('impressions')
+
+/**
+ * Tracks an engagement for the given promo.
+ *
+ * @private
+ */
+const trackEngagement = updateCounters('engagements')
+
+/**
+ * Increments the counter and sets the timestamp for the given entity.
+ *
+ * @private
+ */
+function incrementCounter (keyPath, ts) {
+  // Return the identity function (NOOP) if the last element in the key path
+  // is falsey.
+  if (!last(keyPath)) return id
+
+  return update(keyPath, state => {
+    const { count } = state || { count: 0 }
+    return {
+      count: count + 1,
+      timestamp: ts
+    }
+  })
+}
+
+/**
+ * The placement engine is responsible for placing the given promos. When the
+ * engine is run, the placed promos are returned along with various callbacks
+ * for the calling application to call when events occur (i.e. a promo is
+ * clicked, etc).
+ *
+ * The placement engine returns a promise that resolves to an object containing
+ * the placed promos and the callback functions.
+ *
+ * @param {Array} promos The list of the candidate promos.
  * @param {Window} window The window object.
- * @returns {Signal} A signal that emits the placed promos.
+ * @returns {Promise} A promise.
  */
 export default function placementEngine (promos, window) {
-  // Load the user state.
   const user = get(window.localStorage)
+  const updateUser = (f, user) => set(window.localStorage, f(user))
 
-  // Create the bus signal.
-  const bus = new Bus()
+  const onClick = promo => {
+    const user = get(window.localStorage)
+    const f = trackEngagement(promo, timestamp())
+    updateUser(f, user)
+  }
 
-  // A function that emits a `click` event on the bus.
-  const onClick = promo => bus.next({ type: 'click', promo })
+  const onClose = promo => {
+    const user = get(window.localStorage)
+    const f = blockPromo(promo, timestamp())
+    updateUser(f, user)
+  }
 
-  // A function that emits a `close` event on the bus.
-  const onClose = promo => bus.next({ type: 'close', promo })
+  const onView = promo => {
+    const user = get(window.localStorage)
+    const f = trackImpression(promo, timestamp())
+    updateUser(f, user)
+  }
 
-  // Create the initial state object.
-  const initialState = { user }
+  const placedPromos = placePromos(
+    promos,
+    updateUser(incrementVisits, user),
+    window
+  )
 
-  // The state signal emits the current placement engine state whenever an
-  // event is emitted on the bus.
-  const stateSignal = bus
-    // Emit an initial `visit` event on the bus.
-    .startWith({ type: 'visit' })
-
-    // Run the state machine function over the events emitted on the bus.
-    .stateMachine(stateMachine(promos, window), initialState)
-
-    // Emit the placed promos and callback functions.
-    .map(({ promos }) => ({ promos, onClick, onClose }))
-
-  return stateSignal
+  return Promise.resolve({
+    promos: placedPromos, onClick, onClose, onView
+  })
 }
