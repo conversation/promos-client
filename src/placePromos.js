@@ -70,21 +70,21 @@ function filterPromos (context) {
  * @params {Array} promos The list of promos to place.
  * @returns {Array} The list of placed promos.
  */
-const placePromos = context => pipe([
-  // Filter the promos.
-  filterPromos(extendContext(context)),
+export default function placePromos (context, promos) {
+  return pipe([
+    // Filter the promos.
+    filterPromos(extendContext(context)),
 
-  // Sort the promos by groupId.
-  sortBy(compareBy(get('groupId'))),
+    // Sort the promos by groupId.
+    sortBy(compareBy(get('groupId'))),
 
-  // Chunk the promos in matching groups.
-  chunkBy((a, b) => a.groupId && b.groupId && a.groupId === b.groupId),
+    // Chunk the promos in matching groups.
+    chunkBy((a, b) => a.groupId && b.groupId && a.groupId === b.groupId),
 
-  // Choose one random promo from each group.
-  //
-  // Only one promo from each group may be placed at the same time. This allows
-  // us to randomly cycle through multiple variants of a promo.
-  map(group => head(sample(1, group)))
-])
-
-export default placePromos
+    // Choose one random promo from each group.
+    //
+    // Only one promo from each group may be placed at the same time. This allows
+    // us to randomly cycle through multiple variants of a promo.
+    map(group => head(sample(1, group)))
+  ])(promos)
+}
