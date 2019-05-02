@@ -2,7 +2,7 @@ import placementEngine from './placementEngine'
 import { get, set } from './userState'
 
 // Mock the placePromos function to return the promos unchanged.
-jest.mock('./placePromos', () => jest.fn(promos => promos))
+jest.mock('./placePromos', () => jest.fn(context => promos => promos))
 
 jest.mock('./userState', () => ({
   get: jest.fn(),

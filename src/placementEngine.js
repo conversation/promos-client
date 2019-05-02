@@ -101,13 +101,13 @@ export default function placementEngine (promos, window) {
     updateUser(f, user)
   }
 
-  const placedPromos = placePromos(
-    promos,
-    updateUser(incrementVisits, user),
-    window
-  )
+  const context = { user: updateUser(incrementVisits, user), window }
 
+  // Return a promise containing the placed promos, and the callback functions.
   return Promise.resolve({
-    promos: placedPromos, onClick, onClose, onView
+    promos: placePromos(context)(promos),
+    onClick,
+    onClose,
+    onView
   })
 }

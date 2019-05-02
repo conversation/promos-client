@@ -17,20 +17,20 @@ describe('placePromos', () => {
   const promos = [a, b, c, d, e, f, g, h]
 
   it('ensures only one promo from each group is placed', () => {
-    expect(placePromos(promos, {})).toEqual([a, b, c])
+    expect(placePromos({})(promos)).toEqual([a, b, c])
   })
 
   it('allows filtering promos by user', () => {
-    expect(placePromos(promos, { url: 'foo' })).toEqual([a, b, c, e])
-    expect(placePromos(promos, { url: 'bar' })).toEqual([a, b, c, f])
+    expect(placePromos({ user: { url: 'foo' } })(promos)).toEqual([a, b, c, e])
+    expect(placePromos({ user: { url: 'bar' } })(promos)).toEqual([a, b, c, f])
   })
 
   it('allows filtering promos by user agent', () => {
     const window = { navigator: { userAgent: 'Chrome/72.0.3626.121' } }
-    expect(placePromos(promos, {}, window)).toEqual([a, b, c, g])
+    expect(placePromos({ window })(promos)).toEqual([a, b, c, g])
   })
 
   it('allows filtering promos by promoId', () => {
-    expect(placePromos(promos, { blocked: { promos: [7] } })).toEqual([a, b, c, h])
+    expect(placePromos({ user: { blocked: { promos: [7] } } })(promos)).toEqual([a, b, c, h])
   })
 })
