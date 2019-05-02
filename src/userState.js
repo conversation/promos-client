@@ -20,4 +20,5 @@ export function get (storage) {
  */
 export function set (storage, user) {
   storage.setItem('user', JSON.stringify(user))
+  return user
 }

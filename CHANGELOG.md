@@ -1,3 +1,7 @@
+## Unreleased
+
+* Return user from userState `set` function
+
 ## 3.0.0 (2019-04-30)
 
 * Fix an issue where the placement engine was emitting promos for every event
