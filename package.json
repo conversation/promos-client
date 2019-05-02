@@ -17,7 +17,6 @@
     "url": "git+ssh://git@github.com/conversation/promos-client.git"
   },
   "dependencies": {
-    "bulb": "^6.1.0",
     "fkit": "^3.3.0",
     "ua-parser-js": "^0.7.19"
   },
