@@ -1,6 +1,6 @@
 {
   "name": "@theconversation/promos-client",
-  "version": "3.0.0",
+  "version": "4.0.0-beta.1",
   "description": "Provides various functions for querying The Conversation's promos API",
   "author": "The Conversation <platform@theconversation.com>",
   "license": "MIT",
@@ -17,8 +17,7 @@
     "url": "git+ssh://git@github.com/conversation/promos-client.git"
   },
   "dependencies": {
-    "bulb": "^6.1.0",
-    "fkit": "^3.3.0",
+    "fkit": "^3.4.0",
     "ua-parser-js": "^0.7.19"
   },
   "devDependencies": {

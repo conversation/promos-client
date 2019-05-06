@@ -1,3 +1,9 @@
+## Unreleased
+
+* Return user from userState `set` function
+* Refactor the placement engine to use promises
+* Update `placementEngine` function to take `promos`, `storage`, and `userAgent` arguments
+
 ## 3.0.0 (2019-04-30)
 
 * Fix an issue where the placement engine was emitting promos for every event

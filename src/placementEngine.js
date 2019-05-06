@@ -1,42 +1,135 @@
-import Bus from 'bulb/dist/Bus'
+import UAParser from 'ua-parser-js'
+import id from 'fkit/dist/id'
+import inc from 'fkit/dist/inc'
+import last from 'fkit/dist/last'
+import pipe from 'fkit/dist/pipe'
+import toLower from 'fkit/dist/toLower'
+import toUpper from 'fkit/dist/toUpper'
+import update from 'fkit/dist/update'
 
-import stateMachine from './stateMachine'
-import { get } from './userState'
+import placePromos from './placePromos'
+import { get, set } from './userState'
+import { age, timestamp } from './utils'
 
 /**
- * The placement engine is responsible for placing the given promos into slots.
+ * Updates the counters for the given target.
  *
- * @param {Array} promos The list of promos.
- * @param {Window} window The window object.
- * @returns {Signal} A signal that emits the placed promos.
+ * @private
  */
-export default function placementEngine (promos, window) {
-  // Load the user state.
-  const user = get(window.localStorage)
+const updateCounters = (target) => (promo, ts) => pipe(
+  incrementCounter([target, 'campaigns', promo.campaignId], ts),
+  incrementCounter([target, 'groups', promo.groupId], ts),
+  incrementCounter([target, 'promos', promo.promoId], ts)
+)
 
-  // Create the bus signal.
-  const bus = new Bus()
+/**
+ * Increments the number of visits for the given user.
+ *
+ * @private
+ */
+const incrementVisits = update('visits', inc)
 
-  // A function that emits a `click` event on the bus.
-  const onClick = promo => bus.next({ type: 'click', promo })
+/**
+ * Adds the given promo to the list of blocked promos for the user.
+ *
+ * @private
+ */
+const blockPromo = updateCounters('blocked')
 
-  // A function that emits a `close` event on the bus.
-  const onClose = promo => bus.next({ type: 'close', promo })
+/**
+ * Tracks an impression for the given promo.
+ *
+ * @private
+ */
+const trackImpression = updateCounters('impressions')
 
-  // Create the initial state object.
-  const initialState = { user }
+/**
+ * Tracks an engagement for the given promo.
+ *
+ * @private
+ */
+const trackEngagement = updateCounters('engagements')
 
-  // The state signal emits the current placement engine state whenever an
-  // event is emitted on the bus.
-  const stateSignal = bus
-    // Emit an initial `visit` event on the bus.
-    .startWith({ type: 'visit' })
+/**
+ * Increments the counter and sets the timestamp for the given entity.
+ *
+ * @private
+ */
+function incrementCounter (keyPath, ts) {
+  // Return the identity function (NOOP) if the last element in the key path
+  // is falsey.
+  if (!last(keyPath)) return id
 
-    // Run the state machine function over the events emitted on the bus.
-    .stateMachine(stateMachine(promos, window), initialState)
+  return update(keyPath, state => {
+    const { count } = state || { count: 0 }
+    return {
+      count: count + 1,
+      timestamp: ts
+    }
+  })
+}
 
-    // Emit the placed promos and callback functions.
-    .map(({ promos }) => ({ promos, onClick, onClose }))
+/**
+ * Creates a new placement context that contains objects and functions to be
+ * made available to the constraint queries.
+ *
+ * @private
+ */
+function createContext (userAgent, user) {
+  const uaParser = new UAParser(userAgent)
 
-  return stateSignal
+  return {
+    // Objects
+    browser: uaParser.getBrowser(),
+    device: uaParser.getDevice(),
+    os: uaParser.getOS(),
+    user,
+    window,
+
+    // Functions
+    age,
+    lower: toLower,
+    upper: toUpper
+  }
+}
+
+/**
+ * The placement engine is responsible for placing the given promos. When the
+ * engine is run, the placed promos are returned along with various callbacks
+ * for the calling application to call when events occur (i.e. a promo is
+ * clicked, etc).
+ *
+ * The placement engine returns a promise that resolves to an object containing
+ * the placed promos and the callback functions.
+ *
+ * @param {Storage} storage The storage object.
+ * @param {String} userAgent The user agent string.
+ * @param {Array} promos The list of the candidate promos.
+ * @returns {Promise} A promise.
+ */
+export default function placementEngine ({ promos, storage, userAgent }) {
+  const updateUser = (f, user) => set(storage, f(user))
+  let user = updateUser(incrementVisits, get(storage))
+
+  const onClick = promo => {
+    const f = trackEngagement(promo, timestamp())
+    updateUser(f, user)
+  }
+
+  const onClose = promo => {
+    const f = blockPromo(promo, timestamp())
+    updateUser(f, user)
+  }
+
+  const onView = promo => {
+    const f = trackImpression(promo, timestamp())
+    updateUser(f, user)
+  }
+
+  // Place the promos.
+  const context = createContext(userAgent, user)
+  const placedPromos = placePromos(context, promos)
+
+  // Return a promise containing the placed promos, and the callback functions.
+  return Promise.resolve({ promos: placedPromos, onClick, onClose, onView })
 }
