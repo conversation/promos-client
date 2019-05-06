@@ -76,3 +76,21 @@ export function has (value, target) {
     return value.hasOwnProperty(target)
   }
 }
+
+/**
+ * Determines whether the given values are present (i.e. not `null`) and equal.
+ * The function `f` is applied to the values _before_ they are compared.
+ *
+ * @function
+ * @param {Function} f The function to apply to the values before comparing
+ * them.
+ * @param a The first value.
+ * @param b The second value.
+ * @returns {Boolean} `true` if the value `f(a)` is strictly equal (`===`) to
+ * the value `f(b)`, false otherwise.
+ */
+export const xeqBy = f => (a, b) => {
+  const a_ = f(a)
+  const b_ = f(b)
+  return a_ !== null && b_ !== null && a_ === b_
+}

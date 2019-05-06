@@ -14,7 +14,7 @@ import toLower from 'fkit/dist/toLower'
 import toUpper from 'fkit/dist/toUpper'
 
 import runQuery from './runQuery'
-import { age } from './utils'
+import { age, xeqBy } from './utils'
 
 const PROMO_PROPERTIES = ['creativeId', 'promoId', 'slotId', 'groupId', 'campaignId']
 
@@ -78,8 +78,10 @@ export default function placePromos (context, promos) {
     // Sort the promos by groupId.
     sortBy(compareBy(get('groupId'))),
 
-    // Chunk the promos in matching groups.
-    chunkBy((a, b) => a.groupId && b.groupId && a.groupId === b.groupId),
+    // Chunk the promos by groupId. Promos with matching groupIds will be placed
+    // in the same chunk. Promos without a groupId will be placed in their own
+    // chunk.
+    chunkBy(xeqBy(get('groupId'))),
 
     // Choose one random promo from each group.
     //

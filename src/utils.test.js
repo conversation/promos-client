@@ -1,4 +1,4 @@
-import { age, has, like, match, timestamp } from './utils'
+import { age, has, like, match, timestamp, xeqBy } from './utils'
 
 describe('timestamp', () => {
   it('returns the ISO8601 timestamp', () => {
@@ -80,5 +80,19 @@ describe('has', () => {
     it('returns false otherwise', () => {
       expect(has(value, 'c')).toBe(false)
     })
+  })
+})
+
+describe('xeqBy', () => {
+  it('returns true if the values are equal', () => {
+    expect(xeqBy(Math.abs)(1, -1)).toBe(true)
+    expect(xeqBy(Math.abs)(-1, 1)).toBe(true)
+  })
+
+  it('returns false otherwise', () => {
+    expect(xeqBy(Math.abs)(1, 2)).toBe(false)
+    expect(xeqBy(Math.abs)(2, 1)).toBe(false)
+    expect(xeqBy(Math.abs)(1, null)).toBe(false)
+    expect(xeqBy(Math.abs)(null, 1)).toBe(false)
   })
 })
