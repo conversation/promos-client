@@ -1,3 +1,4 @@
+import placePromos from './placePromos'
 import placementEngine from './placementEngine'
 import { get, set } from './userState'
 
@@ -9,16 +10,14 @@ jest.mock('./userState', () => ({
   set: jest.fn((storage, user) => user)
 }))
 
-// Mock the timestamp function.
-jest.mock('./utils', () => ({ timestamp: jest.fn(() => '123') }))
-
 describe('placementEngine', () => {
   const promos = [
     { promoId: 1, groupId: 1, campaignId: 1 },
     { promoId: 2, groupId: 1, campaignId: 1 },
     { promoId: 3, campaignId: 1 }
   ]
-
+  const storage = jest.fn()
+  const userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36'
   const user = {
     blocked: {},
     impressions: {},
@@ -29,14 +28,30 @@ describe('placementEngine', () => {
   get.mockReturnValue(user)
 
   it('returns a promise that resolves the placed promos', () => {
-    const result = placementEngine(window, promos)
+    const result = placementEngine({ promos, storage, userAgent })
     return expect(result).resolves.toHaveProperty('promos', promos)
   })
 
+  it('passes a context to the placePromos function', () => {
+    placementEngine({ promos, storage, userAgent })
+    expect(placePromos).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        browser: { major: '74', name: 'Chrome', version: '74.0.3729.131' },
+        device: {},
+        os: { name: 'Mac OS', version: '10.14.4' },
+        window,
+        age: expect.any(Function),
+        lower: expect.any(Function),
+        upper: expect.any(Function)
+      }),
+      promos
+    )
+  })
+
   it('increments the number of visits', () => {
-    placementEngine(window, promos)
+    placementEngine({ promos, storage, userAgent })
     expect(set).toHaveBeenLastCalledWith(
-      window.localStorage,
+      storage,
       expect.objectContaining({
         visits: 1
       })
@@ -45,13 +60,13 @@ describe('placementEngine', () => {
 
   describe('onClick', () => {
     it('updates the campaign engagements', () => {
-      return placementEngine(window, promos).then(({ onClick }) => {
+      return placementEngine({ promos, storage, userAgent }).then(({ onClick }) => {
         onClick(promos[0])
         expect(set).toHaveBeenLastCalledWith(
-          window.localStorage,
+          storage,
           expect.objectContaining({
             engagements: expect.objectContaining({
-              campaigns: { 1: { count: 1, timestamp: '123' } }
+              campaigns: { 1: { count: 1, timestamp: expect.any(String) } }
             })
           })
         )
@@ -59,13 +74,13 @@ describe('placementEngine', () => {
     })
 
     it('updates the group engagements', () => {
-      return placementEngine(window, promos).then(({ onClick }) => {
+      return placementEngine({ promos, storage, userAgent }).then(({ onClick }) => {
         onClick(promos[0])
         expect(set).toHaveBeenLastCalledWith(
-          window.localStorage,
+          storage,
           expect.objectContaining({
             engagements: expect.objectContaining({
-              groups: { 1: { count: 1, timestamp: '123' } }
+              groups: { 1: { count: 1, timestamp: expect.any(String) } }
             })
           })
         )
@@ -73,13 +88,13 @@ describe('placementEngine', () => {
     })
 
     it('updates the promo engagements', () => {
-      return placementEngine(window, promos).then(({ onClick }) => {
+      return placementEngine({ promos, storage, userAgent }).then(({ onClick }) => {
         onClick(promos[0])
         expect(set).toHaveBeenLastCalledWith(
-          window.localStorage,
+          storage,
           expect.objectContaining({
             engagements: expect.objectContaining({
-              promos: { 1: { count: 1, timestamp: '123' } }
+              promos: { 1: { count: 1, timestamp: expect.any(String) } }
             })
           })
         )
@@ -89,13 +104,13 @@ describe('placementEngine', () => {
 
   describe('onClose', () => {
     it('updates the blocked campaigns', () => {
-      return placementEngine(window, promos).then(({ onClose }) => {
+      return placementEngine({ promos, storage, userAgent }).then(({ onClose }) => {
         onClose(promos[0])
         expect(set).toHaveBeenLastCalledWith(
-          window.localStorage,
+          storage,
           expect.objectContaining({
             blocked: expect.objectContaining({
-              campaigns: { 1: { count: 1, timestamp: '123' } }
+              campaigns: { 1: { count: 1, timestamp: expect.any(String) } }
             })
           })
         )
@@ -103,13 +118,13 @@ describe('placementEngine', () => {
     })
 
     it('updates the blocked groups', () => {
-      return placementEngine(window, promos).then(({ onClose }) => {
+      return placementEngine({ promos, storage, userAgent }).then(({ onClose }) => {
         onClose(promos[0])
         expect(set).toHaveBeenLastCalledWith(
-          window.localStorage,
+          storage,
           expect.objectContaining({
             blocked: expect.objectContaining({
-              groups: { 1: { count: 1, timestamp: '123' } }
+              groups: { 1: { count: 1, timestamp: expect.any(String) } }
             })
           })
         )
@@ -117,13 +132,13 @@ describe('placementEngine', () => {
     })
 
     it('updates the blocked promos', () => {
-      return placementEngine(window, promos).then(({ onClose }) => {
+      return placementEngine({ promos, storage, userAgent }).then(({ onClose }) => {
         onClose(promos[0])
         expect(set).toHaveBeenLastCalledWith(
-          window.localStorage,
+          storage,
           expect.objectContaining({
             blocked: expect.objectContaining({
-              promos: { 1: { count: 1, timestamp: '123' } }
+              promos: { 1: { count: 1, timestamp: expect.any(String) } }
             })
           })
         )
@@ -133,13 +148,13 @@ describe('placementEngine', () => {
 
   describe('onView', () => {
     it('updates the campaign impressions', () => {
-      return placementEngine(window, promos).then(({ onView }) => {
+      return placementEngine({ promos, storage, userAgent }).then(({ onView }) => {
         onView(promos[0])
         expect(set).toHaveBeenLastCalledWith(
-          window.localStorage,
+          storage,
           expect.objectContaining({
             impressions: expect.objectContaining({
-              campaigns: { 1: { count: 1, timestamp: '123' } }
+              campaigns: { 1: { count: 1, timestamp: expect.any(String) } }
             })
           })
         )
@@ -147,13 +162,13 @@ describe('placementEngine', () => {
     })
 
     it('updates the group impressions', () => {
-      return placementEngine(window, promos).then(({ onView }) => {
+      return placementEngine({ promos, storage, userAgent }).then(({ onView }) => {
         onView(promos[0])
         expect(set).toHaveBeenLastCalledWith(
-          window.localStorage,
+          storage,
           expect.objectContaining({
             impressions: expect.objectContaining({
-              groups: { 1: { count: 1, timestamp: '123' } }
+              groups: { 1: { count: 1, timestamp: expect.any(String) } }
             })
           })
         )
@@ -161,13 +176,13 @@ describe('placementEngine', () => {
     })
 
     it('updates the promo impressions', () => {
-      return placementEngine(window, promos).then(({ onView }) => {
+      return placementEngine({ promos, storage, userAgent }).then(({ onView }) => {
         onView(promos[0])
         expect(set).toHaveBeenLastCalledWith(
-          window.localStorage,
+          storage,
           expect.objectContaining({
             impressions: expect.objectContaining({
-              promos: { 1: { count: 1, timestamp: '123' } }
+              promos: { 1: { count: 1, timestamp: expect.any(String) } }
             })
           })
         )
