@@ -26,8 +26,7 @@ describe('placePromos', () => {
   })
 
   it('allows filtering promos by user agent', () => {
-    const window = { navigator: { userAgent: 'Chrome/72.0.3626.121' } }
-    expect(placePromos({ window }, promos)).toEqual([a, b, c, g])
+    expect(placePromos({ browser: { name: 'Chrome' } }, promos)).toEqual([a, b, c, g])
   })
 
   it('allows filtering promos by promoId', () => {

@@ -6,7 +6,7 @@ jest.mock('./placePromos', () => jest.fn((context, promos) => promos))
 
 jest.mock('./userState', () => ({
   get: jest.fn(),
-  set: jest.fn((window, user) => user)
+  set: jest.fn((storage, user) => user)
 }))
 
 // Mock the timestamp function.
@@ -29,12 +29,12 @@ describe('placementEngine', () => {
   get.mockReturnValue(user)
 
   it('returns a promise that resolves the placed promos', () => {
-    const result = placementEngine(promos, window)
+    const result = placementEngine(window, promos)
     return expect(result).resolves.toHaveProperty('promos', promos)
   })
 
   it('increments the number of visits', () => {
-    placementEngine(promos, window)
+    placementEngine(window, promos)
     expect(set).toHaveBeenLastCalledWith(
       window.localStorage,
       expect.objectContaining({
@@ -45,7 +45,7 @@ describe('placementEngine', () => {
 
   describe('onClick', () => {
     it('updates the campaign engagements', () => {
-      return placementEngine(promos, window).then(({ onClick }) => {
+      return placementEngine(window, promos).then(({ onClick }) => {
         onClick(promos[0])
         expect(set).toHaveBeenLastCalledWith(
           window.localStorage,
@@ -59,7 +59,7 @@ describe('placementEngine', () => {
     })
 
     it('updates the group engagements', () => {
-      return placementEngine(promos, window).then(({ onClick }) => {
+      return placementEngine(window, promos).then(({ onClick }) => {
         onClick(promos[0])
         expect(set).toHaveBeenLastCalledWith(
           window.localStorage,
@@ -73,7 +73,7 @@ describe('placementEngine', () => {
     })
 
     it('updates the promo engagements', () => {
-      return placementEngine(promos, window).then(({ onClick }) => {
+      return placementEngine(window, promos).then(({ onClick }) => {
         onClick(promos[0])
         expect(set).toHaveBeenLastCalledWith(
           window.localStorage,
@@ -89,7 +89,7 @@ describe('placementEngine', () => {
 
   describe('onClose', () => {
     it('updates the blocked campaigns', () => {
-      return placementEngine(promos, window).then(({ onClose }) => {
+      return placementEngine(window, promos).then(({ onClose }) => {
         onClose(promos[0])
         expect(set).toHaveBeenLastCalledWith(
           window.localStorage,
@@ -103,7 +103,7 @@ describe('placementEngine', () => {
     })
 
     it('updates the blocked groups', () => {
-      return placementEngine(promos, window).then(({ onClose }) => {
+      return placementEngine(window, promos).then(({ onClose }) => {
         onClose(promos[0])
         expect(set).toHaveBeenLastCalledWith(
           window.localStorage,
@@ -117,7 +117,7 @@ describe('placementEngine', () => {
     })
 
     it('updates the blocked promos', () => {
-      return placementEngine(promos, window).then(({ onClose }) => {
+      return placementEngine(window, promos).then(({ onClose }) => {
         onClose(promos[0])
         expect(set).toHaveBeenLastCalledWith(
           window.localStorage,
@@ -133,7 +133,7 @@ describe('placementEngine', () => {
 
   describe('onView', () => {
     it('updates the campaign impressions', () => {
-      return placementEngine(promos, window).then(({ onView }) => {
+      return placementEngine(window, promos).then(({ onView }) => {
         onView(promos[0])
         expect(set).toHaveBeenLastCalledWith(
           window.localStorage,
@@ -147,7 +147,7 @@ describe('placementEngine', () => {
     })
 
     it('updates the group impressions', () => {
-      return placementEngine(promos, window).then(({ onView }) => {
+      return placementEngine(window, promos).then(({ onView }) => {
         onView(promos[0])
         expect(set).toHaveBeenLastCalledWith(
           window.localStorage,
@@ -161,7 +161,7 @@ describe('placementEngine', () => {
     })
 
     it('updates the promo impressions', () => {
-      return placementEngine(promos, window).then(({ onView }) => {
+      return placementEngine(window, promos).then(({ onView }) => {
         onView(promos[0])
         expect(set).toHaveBeenLastCalledWith(
           window.localStorage,

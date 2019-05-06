@@ -1,12 +1,15 @@
+import UAParser from 'ua-parser-js'
 import id from 'fkit/dist/id'
 import inc from 'fkit/dist/inc'
 import last from 'fkit/dist/last'
 import pipe from 'fkit/dist/pipe'
+import toLower from 'fkit/dist/toLower'
+import toUpper from 'fkit/dist/toUpper'
 import update from 'fkit/dist/update'
 
 import placePromos from './placePromos'
 import { get, set } from './userState'
-import { timestamp } from './utils'
+import { age, timestamp } from './utils'
 
 /**
  * Updates the counters for the given target.
@@ -67,6 +70,31 @@ function incrementCounter (keyPath, ts) {
 }
 
 /**
+ * Creates a new placement context that contains functions and objects to be
+ * made available to the constraint queries.
+ *
+ * @private
+ */
+function createContext (window, user) {
+  const uaParser = new UAParser(get('navigator.userAgent', window))
+
+  return {
+    user,
+    window,
+
+    // Utility functions
+    age,
+    lower: toLower,
+    upper: toUpper,
+
+    // User agent obejcts
+    browser: uaParser.getBrowser(),
+    device: uaParser.getDevice(),
+    os: uaParser.getOS()
+  }
+}
+
+/**
  * The placement engine is responsible for placing the given promos. When the
  * engine is run, the placed promos are returned along with various callbacks
  * for the calling application to call when events occur (i.e. a promo is
@@ -98,7 +126,7 @@ export default function placementEngine (window, promos) {
     updateUser(f, user)
   }
 
-  const context = { user, window }
+  const context = createContext(window, user)
   const placedPromos = placePromos(context, promos)
 
   // Return a promise containing the placed promos, and the callback functions.

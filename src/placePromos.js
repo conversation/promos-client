@@ -1,4 +1,3 @@
-import UAParser from 'ua-parser-js'
 import chunkBy from 'fkit/dist/chunkBy'
 import compareBy from 'fkit/dist/compareBy'
 import copy from 'fkit/dist/copy'
@@ -10,37 +9,11 @@ import pick from 'fkit/dist/pick'
 import pipe from 'fkit/dist/pipe'
 import sample from 'fkit/dist/sample'
 import sortBy from 'fkit/dist/sortBy'
-import toLower from 'fkit/dist/toLower'
-import toUpper from 'fkit/dist/toUpper'
 
 import runQuery from './runQuery'
-import { age, xeqBy } from './utils'
+import { xeqBy } from './utils'
 
 const PROMO_PROPERTIES = ['creativeId', 'promoId', 'slotId', 'groupId', 'campaignId']
-
-/**
- * Extends the given context with functions and objects to be made available to
- * the query.
- *
- * @private
- */
-function extendContext (context) {
-  const uaParser = new UAParser(get('navigator.userAgent', context.window))
-
-  return {
-    ...context,
-
-    // Functions
-    age,
-    lower: toLower,
-    upper: toUpper,
-
-    // Objects
-    browser: uaParser.getBrowser(),
-    device: uaParser.getDevice(),
-    os: uaParser.getOS()
-  }
-}
 
 /**
  * Filters the promos which satisfy their constraints in the given context.
@@ -73,7 +46,7 @@ function filterPromos (context) {
 export default function placePromos (context, promos) {
   return pipe([
     // Filter the promos.
-    filterPromos(extendContext(context)),
+    filterPromos(context),
 
     // Sort the promos by groupId.
     sortBy(compareBy(get('groupId'))),

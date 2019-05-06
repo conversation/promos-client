@@ -15,7 +15,7 @@ export function get (storage) {
 /**
  * Stores the given user state.
  *
- * @param storage The storage object.
+ * @param {Storage} storage The storage object.
  * @param {Object} user The user state.
  */
 export function set (storage, user) {
