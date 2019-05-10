@@ -92,5 +92,9 @@ export function has (value, target) {
 export const xeqBy = f => (a, b) => {
   const a_ = f(a)
   const b_ = f(b)
-  return a_ !== null && b_ !== null && a_ === b_
+  return (
+    a_ !== undefined && a_ !== null &&
+    b_ !== undefined && b_ !== null &&
+    a_ === b_
+  )
 }
