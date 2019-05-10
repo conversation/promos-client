@@ -1,3 +1,5 @@
+import id from 'fkit/dist/id'
+
 import { age, has, like, match, timestamp, xeqBy } from './utils'
 
 describe('timestamp', () => {
@@ -85,14 +87,20 @@ describe('has', () => {
 
 describe('xeqBy', () => {
   it('returns true if the values are equal', () => {
-    expect(xeqBy(Math.abs)(1, -1)).toBe(true)
-    expect(xeqBy(Math.abs)(-1, 1)).toBe(true)
+    expect(xeqBy(id)(1, 1)).toBe(true)
+    expect(xeqBy(id)(1, 1)).toBe(true)
   })
 
   it('returns false otherwise', () => {
-    expect(xeqBy(Math.abs)(1, 2)).toBe(false)
-    expect(xeqBy(Math.abs)(2, 1)).toBe(false)
-    expect(xeqBy(Math.abs)(1, null)).toBe(false)
-    expect(xeqBy(Math.abs)(null, 1)).toBe(false)
+    expect(xeqBy(id)(1, 2)).toBe(false)
+    expect(xeqBy(id)(2, 1)).toBe(false)
+
+    expect(xeqBy(id)(1, null)).toBe(false)
+    expect(xeqBy(id)(null, 1)).toBe(false)
+    expect(xeqBy(id)(null, null)).toBe(false)
+
+    expect(xeqBy(id)(1, undefined)).toBe(false)
+    expect(xeqBy(id)(undefined, 1)).toBe(false)
+    expect(xeqBy(id)(undefined, undefined)).toBe(false)
   })
 })
