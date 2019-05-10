@@ -6,12 +6,9 @@ The promos client provides a placement engine for placing promos into slots on a
 
 ## How It Works
 
-The placement engine is responsible for placing promos into slots. It does this by filtering the candidate promos by their constraints, as well as a few other simple rules for how they can be placed together.
+The placement engine is responsible for filtering promos based on certain rules (e.g. constraints). It returns a promise that resolves to an object with the following shape:
 
-
-When you run the placement engine, it returns a promise that resolves to an object with the following shape:
-
-- `promos`: The list of placed promos. It is up to the app to render the promos into slots.
+- `promos`: The list of placed promos.
 - `onClick`: The callback function that should be called if the user clicks a promo.
 - `onClose`: The callback function that should be called if the user dismisses a promo.
 - `onView`: The callback function that should be called if the user views a promo.
