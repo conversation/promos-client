@@ -8,6 +8,14 @@ The promos client provides a placement engine for placing promos into slots on a
 
 The placement engine is responsible for placing promos into slots. It does this by filtering the candidate promos by their constraints, as well as a few other simple rules for how they can be placed together.
 
+
+When you run the placement engine, it returns a promise that resolves to an object with the following shape:
+
+- `promos`: The list of placed promos. It is up to the app to render the promos into slots.
+- `onClick`: The callback function that should be called if the user clicks a promo.
+- `onClose`: The callback function that should be called if the user dismisses a promo.
+- `onView`: The callback function that should be called if the user views a promo.
+
 ```js
 import { placementEngine } from '@theconversation/promos-client'
 
@@ -17,19 +25,7 @@ const promos = [
   { promoId: 3, groupId: 2, slotId: 2, constraints: '...' }
 ]
 
-/**
- * When you subscribe to the placement engine, the callback will be called
- * whenever the placed promos are updated.
- *
- * The callback is called with the following arguments:
- *
- * - `promos` the list of placed promos. It is up to the app to
- *   render the promos into slots.
- *
- * - `onClose` the callback function that should be called if the
- *   user dismisses a promo (e.g. popup).
- */
-placementEngine(promos, window).subscribe((promos, onClose) => {
+placementEngine(storage, promos).then(({ promos, onClick, onClose, onView }) => {
   // Render the promos.
 })
 ```
