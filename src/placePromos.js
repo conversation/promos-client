@@ -1,6 +1,7 @@
 import chunkBy from 'fkit/dist/chunkBy'
 import compareBy from 'fkit/dist/compareBy'
 import copy from 'fkit/dist/copy'
+import curry from 'fkit/dist/curry'
 import filter from 'fkit/dist/filter'
 import get from 'fkit/dist/get'
 import head from 'fkit/dist/head'
@@ -13,24 +14,58 @@ import sortBy from 'fkit/dist/sortBy'
 import runQuery from './runQuery'
 import { xeqBy } from './utils'
 
+// The properties to copy from a promo into a context.
 const PROMO_PROPERTIES = ['creativeId', 'promoId', 'slotId', 'groupId', 'campaignId']
 
 /**
- * Filters the promos which satisfy their constraints in the given context.
+ * Returns `true` if the promo's constraints are satisfied in the given context,
+ * `false` otherwise.
  *
  * @private
  */
-function filterPromos (context) {
-  return filter(promo => {
-    // The local context adds several properties from the current promo.
-    const localContext = copy(context, pick(PROMO_PROPERTIES, promo))
+const isSatisfied = context => promo => {
+  // Promos without constraints are passed through.
+  if (!promo.constraints) return true
 
-    // Promos without constraints are passed through.
-    return promo.constraints
-      ? runQuery(promo.constraints, localContext)
-      : true
-  })
+  // The local context copies several properties from the current promo.
+  const localContext = copy(context, pick(PROMO_PROPERTIES, promo))
+
+  return runQuery(promo.constraints, localContext)
 }
+
+/**
+ * Filters the promos that have constraints satisfied in the given context.
+ *
+ * @private
+ */
+const filterPromos = context => filter(isSatisfied(context))
+
+/**
+ * Sorts the promos by groupId.
+ *
+ * @private
+ */
+const sortPromosByGroupId = sortBy(compareBy(get('groupId')))
+
+/**
+  * Chunks the promos by groupId.
+  *
+  * Promos with matching groupIds will be placed in the same chunk. Promos
+  * without a groupId will be placed in their own chunks.
+  *
+  * @private
+  */
+const chunkPromosByGroupId = chunkBy(xeqBy(get('groupId')))
+
+/**
+ * Chooses one promo at random from each group.
+ *
+ * Only one promo from each group may be placed at the same time. This allows us
+ * to randomly cycle through multiple variants of a promo.
+ *
+ * @private
+ */
+const chooseOnePromoFromEachGroup = map(group => head(sample(1, group)))
 
 /**
  * Places the promos based on the following rules:
@@ -39,27 +74,23 @@ function filterPromos (context) {
  *   - If a group contains two or more promos, then one will be picked at random.
  *   - Promos without a group are picked independently of each other.
  *
- * @params {Object} context The context object.
+ * This function is curried for convenience, so that it can be either partially
+ * or fully applied.
+ *
  * @params {Array} promos The list of promos to place.
+ * @params {Object} context The placement context.
  * @returns {Array} The list of placed promos.
  */
-export default function placePromos (context, promos) {
-  return pipe([
-    // Filter the promos.
+function placePromos (promos, context) {
+  // The pipeline contains the steps in the placement algorithm.
+  const pipeline = pipe([
     filterPromos(context),
+    sortPromosByGroupId,
+    chunkPromosByGroupId,
+    chooseOnePromoFromEachGroup
+  ])
 
-    // Sort the promos by groupId.
-    sortBy(compareBy(get('groupId'))),
-
-    // Chunk the promos by groupId. Promos with matching groupIds will be placed
-    // in the same chunk. Promos without a groupId will be placed in their own
-    // chunk.
-    chunkBy(xeqBy(get('groupId'))),
-
-    // Choose one random promo from each group.
-    //
-    // Only one promo from each group may be placed at the same time. This allows
-    // us to randomly cycle through multiple variants of a promo.
-    map(group => head(sample(1, group)))
-  ])(promos)
+  return pipeline(promos)
 }
+
+export default curry(placePromos)

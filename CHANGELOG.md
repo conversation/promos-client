@@ -1,9 +1,8 @@
 ## Unreleased
 
-* Return user from userState `set` function
 * Refactor the placement engine to use promises
-* Update `placementEngine` function to take `promos`, `storage`, and `userAgent` arguments
 * Fix bug in `xeqBy` function
+* Reorder arguments to `placementEngine` function
 
 ## 3.0.0 (2019-04-30)
 
