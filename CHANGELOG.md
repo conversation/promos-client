@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 4.0.0 (2019-05-10)
+
 * Refactor the placement engine to use promises
 * Fix bug in `xeqBy` function
 * Reorder arguments to `placementEngine` function
