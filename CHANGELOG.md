@@ -1,6 +1,7 @@
 ## Unreleased
 
 * Bump lodash to 4.17.14
+* Bump standard to 13.1.0
 
 ## 4.0.0 (2019-05-10)
 

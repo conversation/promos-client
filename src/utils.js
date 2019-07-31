@@ -73,7 +73,7 @@ export function has (value, target) {
   } else if (typeof value === 'string' || Array.isArray(value)) {
     return value.indexOf(target) >= 0
   } else {
-    return value.hasOwnProperty(target)
+    return Object.prototype.hasOwnProperty.call(value, target)
   }
 }
 
