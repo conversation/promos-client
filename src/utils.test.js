@@ -1,6 +1,6 @@
 import id from 'fkit/dist/id'
 
-import { age, has, like, match, timestamp, xeqBy } from './utils'
+import { age, has, like, match, scrollPercentX, scrollPercentY, timestamp, xeqBy } from './utils'
 
 describe('timestamp', () => {
   it('returns the ISO8601 timestamp', () => {
@@ -102,5 +102,25 @@ describe('xeqBy', () => {
     expect(xeqBy(id)(1, undefined)).toBe(false)
     expect(xeqBy(id)(undefined, 1)).toBe(false)
     expect(xeqBy(id)(undefined, undefined)).toBe(false)
+  })
+})
+
+describe('scrollPercentX', () => {
+  Object.defineProperty(document.documentElement, 'scrollLeft', { value: 50 })
+  Object.defineProperty(document.documentElement, 'scrollWidth', { value: 200 })
+  Object.defineProperty(document.documentElement, 'clientWidth', { value: 100 })
+
+  it('returns the horizontal scroll percentage', () => {
+    expect(scrollPercentX()).toBe(0.5)
+  })
+})
+
+describe('scrollPercentY', () => {
+  Object.defineProperty(document.documentElement, 'scrollTop', { value: 50 })
+  Object.defineProperty(document.documentElement, 'scrollHeight', { value: 200 })
+  Object.defineProperty(document.documentElement, 'clientHeight', { value: 100 })
+
+  it('returns the vertical scroll percentage', () => {
+    expect(scrollPercentY()).toBe(0.5)
   })
 })
