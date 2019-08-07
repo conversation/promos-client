@@ -2,7 +2,7 @@ import UAParser from 'ua-parser-js'
 import toLower from 'fkit/dist/toLower'
 import toUpper from 'fkit/dist/toUpper'
 
-import { age } from './utils'
+import { age, scrollPercentX, scrollPercentY } from './utils'
 
 /**
  * Creates a new placement context that contains objects and functions to be
@@ -13,16 +13,21 @@ import { age } from './utils'
  */
 export default function createContext (user) {
   const uaParser = new UAParser(window.navigator.userAgent)
+  const scroll = {
+    percentX: scrollPercentX(),
+    percentY: scrollPercentY()
+  }
 
   return {
-    // Objects
+    // objects
     browser: uaParser.getBrowser(),
     device: uaParser.getDevice(),
     os: uaParser.getOS(),
+    scroll,
     user,
     window,
 
-    // Functions
+    // functions
     age,
     lower: toLower,
     upper: toUpper
