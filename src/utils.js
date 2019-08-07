@@ -98,3 +98,29 @@ export const xeqBy = f => (a, b) => {
     a_ === b_
   )
 }
+
+/**
+ * Calculates the horizontal scroll amount of the page.
+ *
+ * This is more complex than it should be, because of browser inconsistencies.
+ *
+ * @return {Number} The scroll amount in percent.
+ */
+export function scrollPercentX () {
+  const a = document.documentElement
+  const b = document.body
+  return (a.scrollLeft || b.scrollLeft) / ((a.scrollWidth || b.scrollWidth) - a.clientWidth)
+}
+
+/**
+ * Calculates the vertical scroll amount of the page.
+ *
+ * This is more complex than it should be, because of browser inconsistencies.
+ *
+ * @return {Number} The scroll amount in percent.
+ */
+export function scrollPercentY () {
+  const a = document.documentElement
+  const b = document.body
+  return (a.scrollTop || b.scrollTop) / ((a.scrollHeight || b.scrollHeight) - a.clientHeight)
+}
