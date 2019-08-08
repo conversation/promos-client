@@ -25,15 +25,16 @@ const incrementVisits = update('visits', inc)
  *
  * @param {Storage} storage The storage object.
  * @param {Array} promos The list of the candidate promos.
+ * @param {Object} custom The custom state object.
  * @returns {Promise} A promise that resolves to the promos.
  */
-function placementEngine (storage, promos) {
+function placementEngine (storage, promos, custom) {
   const user = getUser(storage)
 
   // The pipeline contains the steps in the placement engine algorithm.
   const pipeline = pipe(
     updateUser(storage, incrementVisits),
-    createContext,
+    createContext(custom),
     placePromos(promos),
     resolvePromos(storage)
   )
