@@ -16,7 +16,7 @@ describe('createContext', () => {
     // Stub the user agent.
     Object.defineProperty(window.navigator, 'userAgent', { value: userAgent })
 
-    expect(createContext(custom, user)).toMatchObject({
+    expect(createContext(user, custom)).toMatchObject({
       browser: { major: '74', name: 'Chrome', version: '74.0.3729.131' },
       device: {},
       os: { name: 'Mac OS', version: '10.14.4' },

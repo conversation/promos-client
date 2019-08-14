@@ -1,33 +1,61 @@
 import mockStorage from './mockStorage'
 import placementEngine from './placementEngine'
+import stateMachine from './stateMachine'
+import { getUser } from './userState'
+
+jest.mock('./stateMachine', () => jest.fn())
+jest.mock('./userState', () => ({ getUser: jest.fn() }))
+
+// Mock the now function.
+Date.now = jest.fn(() => 123)
 
 describe('placementEngine', () => {
-  const userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36'
-  const a = { promoId: 1 }
-  const b = { promoId: 2, constraints: 'user.visits > 1' }
-  const c = { promoId: 3, constraints: 'browser.name = "Chrome"' }
-  const d = { promoId: 4, groupId: 1, constraints: 'groupId NOT IN user.blocked.groups' }
-  const e = { promoId: 5, constraints: 'custom.foo = "bar"' }
-  const promos = [a, b, c, d, e]
+  const seed = 123
+  const user = { visits: 1 }
+  const promo = { promoid: 1 }
+  const promos = [promo]
   const custom = { foo: 'bar' }
 
-  // Stub the user agent.
-  Object.defineProperty(window.navigator, 'userAgent', { value: userAgent })
+  getUser.mockReturnValue(user)
 
-  it('increments the number of visits', () => {
-    const storage = mockStorage()
-    placementEngine(storage, promos, custom)
-    expect(storage.state).toMatchObject({ user: { visits: 1 } })
+  const innerMock = jest.fn((state, event, emit) => {
+    emit.next({ promos })
+    return state
   })
 
-  it('resolves the promos that have satisfied constraints', () => {
-    const storage = mockStorage({
-      user: {
-        blocked: { groups: [1] },
-        visits: 1
-      }
-    })
-    const promise = placementEngine(storage, promos, custom)
-    return expect(promise).resolves.toHaveProperty('promos', [a, b, c, e])
+  // The stateMachine function is curried, so we need to return the inner mocked
+  // function.
+  stateMachine.mockImplementation(() => innerMock)
+
+  it('emits an initial init event to the state machine', done => {
+    const storage = mockStorage()
+
+    placementEngine(storage, [], custom)
+      .subscribe(state => {
+        expect(state.promos).toEqual(promos)
+        expect(stateMachine).toHaveBeenLastCalledWith(storage, [], custom)
+        expect(innerMock).toHaveBeenLastCalledWith({ seed, user }, { type: 'visit' }, expect.anything())
+        done()
+      })
+  })
+
+  it('handles the onClick/onClose callbacks', done => {
+    let onClick, onClose
+
+    placementEngine(mockStorage, [], custom)
+      .subscribe(state => {
+        onClick = state.onClick
+        onClose = state.onClose
+      })
+
+    setTimeout(() => {
+      onClick(promo)
+      expect(innerMock).toHaveBeenLastCalledWith({ seed, user }, { type: 'click', promo }, expect.anything())
+
+      onClose(promo)
+      expect(innerMock).toHaveBeenLastCalledWith({ seed, user }, { type: 'close', promo }, expect.anything())
+
+      done()
+    }, 0)
   })
 })

@@ -1,14 +1,7 @@
-import inc from 'fkit/dist/inc'
-import pipe from 'fkit/dist/pipe'
-import update from 'fkit/dist/update'
+import Bus from 'bulb/dist/Bus'
 
-import createContext from './createContext'
-import placePromos from './placePromos'
-import resolvePromos from './resolvePromos'
-import { getUser, updateUser } from './userState'
-
-// Increments the number of visits for the user.
-const incrementVisits = update('visits', inc)
+import stateMachine from './stateMachine'
+import { getUser } from './userState'
 
 /**
  * The placement engine is responsible for filtering promos based on certain
@@ -28,21 +21,41 @@ const incrementVisits = update('visits', inc)
  * @param {Object} custom The custom state object.
  * @returns {Promise} A promise that resolves to the promos.
  */
-function placementEngine (storage, promos, custom) {
+function placementEngine (storage, promos, custom = {}) {
   // Generate a seed value for the PRNG.
   const seed = Date.now()
 
+  // Load the user state.
   const user = getUser(storage)
 
-  // The pipeline contains the steps in the placement engine algorithm.
-  const pipeline = pipe(
-    updateUser(storage, incrementVisits),
-    createContext(custom),
-    placePromos(seed, promos),
-    resolvePromos(storage)
-  )
+  // Create the bus signal.
+  const bus = new Bus()
 
-  return pipeline(user)
+  // A function that emits a `click` event on the bus.
+  const onClick = promo => bus.next({ type: 'click', promo })
+
+  // A function that emits a `close` event on the bus.
+  const onClose = promo => bus.next({ type: 'close', promo })
+
+  // A function that emits a `view` event on the bus.
+  const onView = promo => bus.next({ type: 'view', promo })
+
+  // Create the initial state object.
+  const initialState = { seed, user }
+
+  // The stateful signal emits the current placement engine state whenever an
+  // event is emitted on the bus.
+  const statefulSignal = bus
+    // Emit an initial `visit` event on the bus.
+    .startWith({ type: 'visit' })
+
+    // Run the state machine function over the events emitted on the bus.
+    .stateMachine(stateMachine(storage, promos, custom), initialState)
+
+    // Emit the placed promos and callback functions.
+    .map(({ promos }) => ({ promos, onClick, onClose, onView }))
+
+  return statefulSignal
 }
 
 export default placementEngine
