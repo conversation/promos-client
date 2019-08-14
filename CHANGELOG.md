@@ -5,6 +5,7 @@
 * Add scroll percent to context
 * Add custom state to context
 * Add `prng` function to utils
+* Add `choose` function to utils
 
 ## 4.0.0 (2019-05-10)
 

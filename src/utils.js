@@ -146,3 +146,15 @@ export function prng (seed) {
     return ((t ^ t >>> 14) >>> 0) / 4294967296
   }
 }
+
+/**
+ * Chooses a random from an array, using a given pseudorandom number generator.
+ *
+ * @param {Function} rand The PRNG function.
+ * @param {Array} as An array.
+ * @return {Object} A random element from the array.
+ */
+export function choose (rand, as) {
+  const i = Math.floor(rand() * as.length)
+  return as[i]
+}

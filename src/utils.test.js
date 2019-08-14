@@ -1,6 +1,6 @@
 import id from 'fkit/dist/id'
 
-import { age, has, like, match, prng, scrollPercentX, scrollPercentY, timestamp, xeqBy } from './utils'
+import { age, choose, has, like, match, prng, scrollPercentX, scrollPercentY, timestamp, xeqBy } from './utils'
 
 describe('timestamp', () => {
   it('returns the ISO8601 timestamp', () => {
@@ -131,5 +131,13 @@ describe('prng', () => {
     expect(rand()).toBe(0.26642920868471265)
     expect(rand()).toBe(0.0003297457005828619)
     expect(rand()).toBe(0.2232720274478197)
+  })
+})
+
+describe('choose', () => {
+  it('returns a random element from the array', () => {
+    expect(choose(() => 0.1, [0, 1, 2])).toBe(0)
+    expect(choose(() => 0.5, [0, 1, 2])).toBe(1)
+    expect(choose(() => 0.9, [0, 1, 2])).toBe(2)
   })
 })
