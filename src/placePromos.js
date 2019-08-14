@@ -4,15 +4,13 @@ import copy from 'fkit/dist/copy'
 import curry from 'fkit/dist/curry'
 import filter from 'fkit/dist/filter'
 import get from 'fkit/dist/get'
-import head from 'fkit/dist/head'
 import map from 'fkit/dist/map'
 import pick from 'fkit/dist/pick'
 import pipe from 'fkit/dist/pipe'
-import sample from 'fkit/dist/sample'
 import sortBy from 'fkit/dist/sortBy'
 
 import runQuery from './runQuery'
-import { xeqBy } from './utils'
+import { choose, prng, xeqBy } from './utils'
 
 // The properties to copy from a promo into a context.
 const PROMO_PROPERTIES = ['creativeId', 'promoId', 'slotId', 'groupId', 'campaignId']
@@ -65,7 +63,7 @@ const chunkPromosByGroupId = chunkBy(xeqBy(get('groupId')))
  *
  * @private
  */
-const chooseOnePromoFromEachGroup = map(group => head(sample(1, group)))
+const chooseOnePromoFromEachGroup = rand => map(group => choose(rand, group))
 
 /**
  * Places the promos based on the following rules:
@@ -77,17 +75,20 @@ const chooseOnePromoFromEachGroup = map(group => head(sample(1, group)))
  * This function is curried for convenience, so that it can be either partially
  * or fully applied.
  *
- * @params {Array} promos The list of promos to place.
- * @params {Object} context The placement context.
+ * @param {Function} seed A seed value.
+ * @param {Array} promos The list of promos to place.
+ * @param {Object} context The placement context.
  * @returns {Array} The list of placed promos.
  */
-function placePromos (promos, context) {
+function placePromos (seed, promos, context) {
+  const rand = prng(seed)
+
   // The pipeline contains the steps in the placement algorithm.
   const pipeline = pipe([
     filterPromos(context),
     sortPromosByGroupId,
     chunkPromosByGroupId,
-    chooseOnePromoFromEachGroup
+    chooseOnePromoFromEachGroup(rand)
   ])
 
   return pipeline(promos)

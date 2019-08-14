@@ -29,13 +29,16 @@ const incrementVisits = update('visits', inc)
  * @returns {Promise} A promise that resolves to the promos.
  */
 function placementEngine (storage, promos, custom) {
+  // Generate a seed value for the PRNG.
+  const seed = Date.now()
+
   const user = getUser(storage)
 
   // The pipeline contains the steps in the placement engine algorithm.
   const pipeline = pipe(
     updateUser(storage, incrementVisits),
     createContext(custom),
-    placePromos(promos),
+    placePromos(seed, promos),
     resolvePromos(storage)
   )
 
