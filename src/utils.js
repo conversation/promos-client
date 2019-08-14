@@ -124,3 +124,25 @@ export function scrollPercentY () {
   const b = document.body
   return (a.scrollTop || b.scrollTop) / ((a.scrollHeight || b.scrollHeight) - a.clientHeight)
 }
+
+/**
+ * Returns a pseudorandom number generator using the given seed value.
+ *
+ * The seed allows the generator to deterministically return the same sequence
+ * of pseudorandom numbers.
+ *
+ * This generator uses the mulberry32 algorithm, for more details see:
+ *
+ * https://gist.github.com/tommyettinger/46a874533244883189143505d203312c
+ *
+ * @param {Number} seed The seed value.
+ * @returns {Number} A random number.
+ */
+export function prng (seed) {
+  return () => {
+    var t = seed += 0x6D2B79F5
+    t = Math.imul(t ^ t >>> 15, t | 1)
+    t ^= t + Math.imul(t ^ t >>> 7, t | 61)
+    return ((t ^ t >>> 14) >>> 0) / 4294967296
+  }
+}

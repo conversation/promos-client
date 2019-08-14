@@ -1,6 +1,6 @@
 import id from 'fkit/dist/id'
 
-import { age, has, like, match, scrollPercentX, scrollPercentY, timestamp, xeqBy } from './utils'
+import { age, has, like, match, prng, scrollPercentX, scrollPercentY, timestamp, xeqBy } from './utils'
 
 describe('timestamp', () => {
   it('returns the ISO8601 timestamp', () => {
@@ -122,5 +122,14 @@ describe('scrollPercentY', () => {
 
   it('returns the vertical scroll percentage', () => {
     expect(scrollPercentY()).toBe(0.5)
+  })
+})
+
+describe('prng', () => {
+  it('returns a pseudorandom number generator function', () => {
+    const rand = prng(0)
+    expect(rand()).toBe(0.26642920868471265)
+    expect(rand()).toBe(0.0003297457005828619)
+    expect(rand()).toBe(0.2232720274478197)
   })
 })
