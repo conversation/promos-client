@@ -46,6 +46,9 @@ function placementEngine (storage, promos, custom = {}) {
   // The stateful signal emits the current placement engine state whenever an
   // event is emitted on the bus.
   const statefulSignal = bus
+    // Throttle events to a maximum rate of one per second.
+    .throttle(1000)
+
     // Emit an initial `visit` event on the bus.
     .startWith({ type: 'visit' })
 
