@@ -48,9 +48,7 @@ describe('placementEngine', () => {
 
     setTimeout(() => {
       onClick(promo)
-
       expect(innerMock).toHaveBeenLastCalledWith({ seed, user }, { type: 'click', promo }, expect.anything())
-
       done()
     }, 0)
   })
@@ -65,9 +63,7 @@ describe('placementEngine', () => {
 
     setTimeout(() => {
       onClose(promo)
-
       expect(innerMock).toHaveBeenLastCalledWith({ seed, user }, { type: 'close', promo }, expect.anything())
-
       done()
     }, 0)
   })
@@ -82,9 +78,7 @@ describe('placementEngine', () => {
 
     setTimeout(() => {
       onView(promo)
-
       expect(innerMock).toHaveBeenLastCalledWith({ seed, user }, { type: 'view', promo }, expect.anything())
-
       done()
     }, 0)
   })
@@ -99,9 +93,7 @@ describe('placementEngine', () => {
 
     setTimeout(() => {
       onRefresh()
-
       expect(innerMock).toHaveBeenLastCalledWith({ seed, user }, { type: 'refresh' }, expect.anything())
-
       done()
     }, 0)
   })
