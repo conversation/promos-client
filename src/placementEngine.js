@@ -40,6 +40,9 @@ function placementEngine (storage, promos, custom = {}) {
   // A function that emits a `view` event on the bus.
   const onView = promo => bus.next({ type: 'view', promo })
 
+  // A function that emits a `refresh` event on the bus.
+  const onRefresh = promo => bus.next({ type: 'refresh', promo })
+
   // Create the initial state object.
   const initialState = { seed, user }
 
@@ -56,7 +59,7 @@ function placementEngine (storage, promos, custom = {}) {
     .stateMachine(stateMachine(storage, promos, custom), initialState)
 
     // Emit the placed promos and callback functions.
-    .map(({ promos }) => ({ promos, onClick, onClose, onView }))
+    .map(({ promos }) => ({ promos, onClick, onClose, onView, onRefresh }))
 
   return statefulSignal
 }

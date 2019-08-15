@@ -14,7 +14,6 @@ describe('placementEngine', () => {
   const user = { visits: 1 }
   const promo = { promoid: 1 }
   const promos = [promo]
-  const custom = { foo: 'bar' }
 
   getUser.mockReturnValue(user)
 
@@ -30,30 +29,78 @@ describe('placementEngine', () => {
   it('emits an initial init event to the state machine', done => {
     const storage = mockStorage()
 
-    placementEngine(storage, [], custom)
+    placementEngine(storage, [])
       .subscribe(state => {
         expect(state.promos).toEqual(promos)
-        expect(stateMachine).toHaveBeenLastCalledWith(storage, [], custom)
+        expect(stateMachine).toHaveBeenLastCalledWith(storage, [], {})
         expect(innerMock).toHaveBeenLastCalledWith({ seed, user }, { type: 'visit' }, expect.anything())
         done()
       })
   })
 
-  it('handles the onClick/onClose callbacks', done => {
-    let onClick, onClose
+  it('handles the onClick callback', done => {
+    let onClick
 
-    placementEngine(mockStorage, [], custom)
+    placementEngine(mockStorage, [])
       .subscribe(state => {
         onClick = state.onClick
-        onClose = state.onClose
       })
 
     setTimeout(() => {
       onClick(promo)
+
       expect(innerMock).toHaveBeenLastCalledWith({ seed, user }, { type: 'click', promo }, expect.anything())
 
+      done()
+    }, 0)
+  })
+
+  it('handles the onClose callback', done => {
+    let onClose
+
+    placementEngine(mockStorage, [])
+      .subscribe(state => {
+        onClose = state.onClose
+      })
+
+    setTimeout(() => {
       onClose(promo)
+
       expect(innerMock).toHaveBeenLastCalledWith({ seed, user }, { type: 'close', promo }, expect.anything())
+
+      done()
+    }, 0)
+  })
+
+  it('handles the onView callback', done => {
+    let onView
+
+    placementEngine(mockStorage, [])
+      .subscribe(state => {
+        onView = state.onView
+      })
+
+    setTimeout(() => {
+      onView(promo)
+
+      expect(innerMock).toHaveBeenLastCalledWith({ seed, user }, { type: 'view', promo }, expect.anything())
+
+      done()
+    }, 0)
+  })
+
+  it('handles the onRefresh callback', done => {
+    let onRefresh
+
+    placementEngine(mockStorage, [])
+      .subscribe(state => {
+        onRefresh = state.onRefresh
+      })
+
+    setTimeout(() => {
+      onRefresh()
+
+      expect(innerMock).toHaveBeenLastCalledWith({ seed, user }, { type: 'refresh' }, expect.anything())
 
       done()
     }, 0)
