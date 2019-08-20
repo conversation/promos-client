@@ -1,7 +1,24 @@
 import Bus from 'bulb/dist/Bus'
 
+import groupBy from 'fkit/dist/groupBy'
+import keys from 'fkit/dist/keys'
+import set from 'fkit/dist/set'
 import stateMachine from './stateMachine'
 import { getUser } from './userState'
+import { seedGenerator } from './utils'
+
+/**
+ * Returns a map from promo groups to seed values.
+ *
+ * @private
+ */
+function createGroupSeeds (promos) {
+  const seed = seedGenerator()
+  const groupIds = keys(groupBy('groupId', promos))
+  return groupIds.reduce((seeds, groupId) =>
+    set(groupId, seed(), seeds)
+  , {})
+}
 
 /**
  * The placement engine is responsible for filtering promos based on certain
@@ -22,8 +39,8 @@ import { getUser } from './userState'
  * @returns {Signal} A signal.
  */
 function placementEngine (storage, promos, custom = {}) {
-  // Generate a seed value for the PRNG.
-  const seed = Date.now()
+  // Create a seed for each promo group.
+  const seeds = createGroupSeeds(promos)
 
   // Load the user state.
   const user = getUser(storage)
@@ -44,7 +61,7 @@ function placementEngine (storage, promos, custom = {}) {
   const onRefresh = promo => bus.next({ type: 'refresh', promo })
 
   // Create the initial state object.
-  const initialState = { seed, user }
+  const initialState = { seeds, user }
 
   // The stateful signal emits the current placement engine state whenever an
   // event is emitted on the bus.

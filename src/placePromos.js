@@ -63,7 +63,7 @@ const chunkPromosByGroupId = chunkBy(xeqBy(get('groupId')))
  *
  * @private
  */
-const chooseOnePromoFromEachGroup = rand => map(group => choose(rand, group))
+const chooseOnePromoFromEachGroup = seeds => map(group => choose(prng(seeds[group[0].groupId]), group))
 
 /**
  * Places the promos based on the following rules:
@@ -75,20 +75,18 @@ const chooseOnePromoFromEachGroup = rand => map(group => choose(rand, group))
  * This function is curried for convenience, so that it can be either partially
  * or fully applied.
  *
- * @param {Function} seed A seed value.
+ * @param {Function} seeds A hash of seed values.
  * @param {Array} promos The list of promos to place.
  * @param {Object} context The placement context.
  * @returns {Array} The list of placed promos.
  */
-function placePromos (seed, promos, context) {
-  const rand = prng(seed)
-
+function placePromos (seeds, promos, context) {
   // The pipeline contains the steps in the placement algorithm.
   const pipeline = pipe([
     filterPromos(context),
     sortPromosByGroupId,
     chunkPromosByGroupId,
-    chooseOnePromoFromEachGroup(rand)
+    chooseOnePromoFromEachGroup(seeds)
   ])
 
   return pipeline(promos)

@@ -13,7 +13,7 @@ jest.mock('./placePromos', () =>
 // Mock the user state setter.
 jest.mock('./userState', () => ({ setUser: jest.fn() }))
 
-// Mock the timestamp function.
+// Mock utils functions.
 jest.mock('./utils', () => ({
   timestamp: jest.fn(() => '123'),
   prng: Math.random

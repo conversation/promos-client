@@ -6,13 +6,15 @@ import { getUser } from './userState'
 jest.mock('./stateMachine', () => jest.fn())
 jest.mock('./userState', () => ({ getUser: jest.fn() }))
 
-// Mock the now function.
-Date.now = jest.fn(() => 123)
+// Mock utils functions.
+jest.mock('./utils', () => ({
+  seedGenerator: jest.fn(() => jest.fn(() => 123))
+}))
 
 describe('placementEngine', () => {
-  const seed = 123
+  const seeds = { 2: 123 }
   const user = { visits: 1 }
-  const promo = { promoid: 1 }
+  const promo = { promoId: 1, groupId: 2 }
   const promos = [promo]
 
   getUser.mockReturnValue(user)
@@ -26,14 +28,32 @@ describe('placementEngine', () => {
   // function.
   stateMachine.mockImplementation(() => innerMock)
 
+  it('creates a seed for each promo group', done => {
+    const storage = mockStorage()
+
+    placementEngine(storage, promos)
+      .subscribe(state => {
+        expect(innerMock).toHaveBeenLastCalledWith(
+          expect.objectContaining({ seeds }),
+          expect.anything(),
+          expect.anything()
+        )
+        done()
+      })
+  })
+
   it('emits an initial init event to the state machine', done => {
     const storage = mockStorage()
 
-    placementEngine(storage, [])
+    placementEngine(storage, promos)
       .subscribe(state => {
         expect(state.promos).toEqual(promos)
-        expect(stateMachine).toHaveBeenLastCalledWith(storage, [], {})
-        expect(innerMock).toHaveBeenLastCalledWith({ seed, user }, { type: 'visit' }, expect.anything())
+        expect(stateMachine).toHaveBeenLastCalledWith(storage, promos, {})
+        expect(innerMock).toHaveBeenLastCalledWith(
+          { seeds, user },
+          { type: 'visit' },
+          expect.anything()
+        )
         done()
       })
   })
@@ -41,14 +61,18 @@ describe('placementEngine', () => {
   it('handles the onClick callback', done => {
     let onClick
 
-    placementEngine(mockStorage, [])
+    placementEngine(mockStorage, promos)
       .subscribe(state => {
         onClick = state.onClick
       })
 
     setTimeout(() => {
       onClick(promo)
-      expect(innerMock).toHaveBeenLastCalledWith({ seed, user }, { type: 'click', promo }, expect.anything())
+      expect(innerMock).toHaveBeenLastCalledWith(
+        expect.anything(),
+        { type: 'click', promo },
+        expect.anything()
+      )
       done()
     }, 0)
   })
@@ -56,14 +80,18 @@ describe('placementEngine', () => {
   it('handles the onClose callback', done => {
     let onClose
 
-    placementEngine(mockStorage, [])
+    placementEngine(mockStorage, promos)
       .subscribe(state => {
         onClose = state.onClose
       })
 
     setTimeout(() => {
       onClose(promo)
-      expect(innerMock).toHaveBeenLastCalledWith({ seed, user }, { type: 'close', promo }, expect.anything())
+      expect(innerMock).toHaveBeenLastCalledWith(
+        expect.anything(),
+        { type: 'close', promo },
+        expect.anything()
+      )
       done()
     }, 0)
   })
@@ -71,14 +99,18 @@ describe('placementEngine', () => {
   it('handles the onView callback', done => {
     let onView
 
-    placementEngine(mockStorage, [])
+    placementEngine(mockStorage, promos)
       .subscribe(state => {
         onView = state.onView
       })
 
     setTimeout(() => {
       onView(promo)
-      expect(innerMock).toHaveBeenLastCalledWith({ seed, user }, { type: 'view', promo }, expect.anything())
+      expect(innerMock).toHaveBeenLastCalledWith(
+        expect.anything(),
+        { type: 'view', promo },
+        expect.anything()
+      )
       done()
     }, 0)
   })
@@ -86,14 +118,18 @@ describe('placementEngine', () => {
   it('handles the onRefresh callback', done => {
     let onRefresh
 
-    placementEngine(mockStorage, [])
+    placementEngine(mockStorage, promos)
       .subscribe(state => {
         onRefresh = state.onRefresh
       })
 
     setTimeout(() => {
       onRefresh()
-      expect(innerMock).toHaveBeenLastCalledWith({ seed, user }, { type: 'refresh' }, expect.anything())
+      expect(innerMock).toHaveBeenLastCalledWith(
+        expect.anything(),
+        { type: 'refresh' },
+        expect.anything()
+      )
       done()
     }, 0)
   })
