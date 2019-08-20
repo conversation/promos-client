@@ -33,6 +33,7 @@ export default function stateMachine (storage, promos, custom = {}) {
   return ({ seed, user }, event, emit) => {
     const ts = timestamp()
 
+    // Update the user state based on the event type.
     if (event.type === 'visit') {
       user = incrementVisits(user)
     } else if (event.type === 'click') {
@@ -43,17 +44,12 @@ export default function stateMachine (storage, promos, custom = {}) {
       user = trackImpression(ts, event.promo)(user)
     }
 
-    // Create a context.
-    const context = createContext(user, custom)
-
-    // Place the promos.
-    const placedPromos = placePromos(seed, promos, context)
-
-    // This is where the promos are actually emitted. i.e. They will only be
-    // emitted on the initial `visit` event. Any other events will not trigger
-    // the promos to be placed again (although they will update the internal
-    // user state object).
-    emit.next({ promos: placedPromos })
+    // Place and emit the promos.
+    if (event.type === 'visit' || event.type === 'refresh') {
+      const context = createContext(user, custom)
+      const placedPromos = placePromos(seed, promos, context)
+      emit.next({ promos: placedPromos })
+    }
 
     // Store the user state as a side effect.
     setUser(storage, user)
