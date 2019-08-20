@@ -5,8 +5,8 @@ import { getUser } from './userState'
 
 /**
  * The placement engine is responsible for filtering promos based on certain
- * rules (e.g. constraints). It returns a promise that resolves to an object
- * with the following shape:
+ * rules (e.g. constraints). It returns a signal that emits objects with the
+ * following shape:
  *
  * - `promos`: The list of placed promos.
  * - `onClick`: The callback function that should be called if the user clicks a
@@ -19,7 +19,7 @@ import { getUser } from './userState'
  * @param {Storage} storage The storage object.
  * @param {Array} promos The list of the candidate promos.
  * @param {Object} custom The custom state object.
- * @returns {Promise} A promise that resolves to the promos.
+ * @returns {Signal} A signal.
  */
 function placementEngine (storage, promos, custom = {}) {
   // Generate a seed value for the PRNG.
