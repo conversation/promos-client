@@ -1,3 +1,10 @@
+## Unreleased
+
+* Bump standard to 14.0.0
+* Bump jest to 24.9.0
+* Bump babel to 7.5.5
+* Bump ua-parser-js to 0.7.20
+
 ## 5.0.0 (2019-08-22)
 
 * Bump lodash to 4.17.14
