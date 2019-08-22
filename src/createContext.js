@@ -9,11 +9,11 @@ import { age, scrollPercentX, scrollPercentY } from './utils'
  * Creates a new placement context that contains objects and functions to be
  * made available to the constraint queries.
  *
- * @param {Object} custom The custom state object.
  * @param {Object} user The user state object.
+ * @param {Object} custom The custom state object.
  * @returns {Object} The placement context.
  */
-function createContext (custom, user) {
+function createContext (user, custom) {
   const uaParser = new UAParser(window.navigator.userAgent)
   const scroll = {
     percentX: scrollPercentX(),

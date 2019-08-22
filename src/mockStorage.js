@@ -1,7 +1,7 @@
 /**
  * Creates a mock storage object for use in testing.
  *
- * @params {Object} state The initial state of the store.
+ * @param {Object} state The initial state of the store.
  * @returns {Storage} The storage object.
  */
 export default function mockStorage (state = {}) {

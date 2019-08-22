@@ -1,6 +1,6 @@
 import id from 'fkit/dist/id'
 
-import { age, choose, has, like, match, prng, scrollPercentX, scrollPercentY, timestamp, xeqBy } from './utils'
+import { age, choose, has, like, match, prng, scrollPercentX, scrollPercentY, seedGenerator, timestamp, xeqBy } from './utils'
 
 describe('timestamp', () => {
   it('returns the ISO8601 timestamp', () => {
@@ -122,6 +122,17 @@ describe('scrollPercentY', () => {
 
   it('returns the vertical scroll percentage', () => {
     expect(scrollPercentY()).toBe(0.5)
+  })
+})
+
+describe('seedGenerator', () => {
+  it('returns a pseudorandom number generator function', () => {
+    const spy = jest.spyOn(Date, 'now').mockImplementation(() => 1555394270536)
+    const seed = seedGenerator()
+    expect(seed()).toBe(4114112711)
+    expect(seed()).toBe(3060312162)
+    expect(seed()).toBe(3758452996)
+    spy.mockRestore()
   })
 })
 

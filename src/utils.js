@@ -126,7 +126,24 @@ export function scrollPercentY () {
 }
 
 /**
- * Returns a pseudorandom number generator using the given seed value.
+ * Returns a seed generator function, based on the current date.
+ *
+ * When the returned seed generator function is called, it returns a new integer
+ * value. This value can be used to seed a pseudorandom number generator.
+ *
+ * @returns {Function} A seed generator function.
+ */
+export function seedGenerator () {
+  let h = Date.now()
+  return () => {
+    h = Math.imul(h ^ h >>> 16, 2246822507)
+    h = Math.imul(h ^ h >>> 13, 3266489909)
+    return (h ^= h >>> 16) >>> 0
+  }
+}
+
+/**
+ * Returns a pseudorandom number generator function, using the given seed value.
  *
  * The seed allows the generator to deterministically return the same sequence
  * of pseudorandom numbers.
@@ -136,11 +153,11 @@ export function scrollPercentY () {
  * https://gist.github.com/tommyettinger/46a874533244883189143505d203312c
  *
  * @param {Number} seed The seed value.
- * @returns {Number} A random number.
+ * @returns {Function} A random number generator function.
  */
 export function prng (seed) {
   return () => {
-    var t = seed += 0x6D2B79F5
+    let t = seed += 0x6D2B79F5
     t = Math.imul(t ^ t >>> 15, t | 1)
     t ^= t + Math.imul(t ^ t >>> 7, t | 61)
     return ((t ^ t >>> 14) >>> 0) / 4294967296

@@ -6,6 +6,9 @@
 * Add custom state to context
 * Add `prng` function to utils
 * Add `choose` function to utils
+* Refactor to a reactive architecture
+* Change `placementEngine` to return a signal, instead of a promise
+* Add `seedGenerator` function to utils
 
 ## 4.0.0 (2019-05-10)
 
