@@ -1,6 +1,7 @@
 ## Unreleased
 
 * Bump standard to 14.0.0
+* Bump jest to 24.9.0
 
 ## 5.0.0 (2019-08-22)
 
