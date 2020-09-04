@@ -33,7 +33,7 @@ function createGroupSeeds (promos) {
  * - `onView`: The callback function that should be called if the user views a
  *   promo.
  *
- * @param {Storage} storage The storage object.
+ * @param {?Storage} storage The storage object.
  * @param {Array} promos The list of the candidate promos.
  * @param {Object} custom The custom state object.
  * @returns {Signal} A signal.
