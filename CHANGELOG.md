@@ -1,5 +1,8 @@
 ## Unreleased
 
+## 5.1.0 (2020-09-08)
+
+* Use default user state if `localStorage` isn't available
 * Bump standard to 14.0.0
 * Bump jest to 24.9.0
 * Bump babel to 7.5.5
