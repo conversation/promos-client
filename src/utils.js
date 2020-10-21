@@ -122,7 +122,15 @@ export function scrollPercentX () {
 export function scrollPercentY () {
   const a = document.documentElement
   const b = document.body
-  return (a.scrollTop || b.scrollTop) / ((a.scrollHeight || b.scrollHeight) - a.clientHeight)
+
+  const maxScroll = (a.scrollHeight || b.scrollHeight) - a.clientHeight
+  const scrollTop = Math.min(maxScroll, Math.max(0, a.scrollTop || b.scrollTop))
+
+  if (maxScroll === 0) {
+    return 0
+  } else {
+    return scrollTop / maxScroll
+  }
 }
 
 /**
