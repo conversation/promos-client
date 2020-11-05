@@ -120,17 +120,14 @@ export function scrollPercentX () {
  * @return {Number} The scroll amount in percent.
  */
 export function scrollPercentY () {
-  const a = document.documentElement
-  const b = document.body
+  const { clientHeight, scrollHeight, scrollTop } = document.documentElement || document.body
 
-  const maxScroll = (a.scrollHeight || b.scrollHeight) - a.clientHeight
-  const scrollTop = Math.min(maxScroll, Math.max(0, a.scrollTop || b.scrollTop))
+  if (!scrollTop) { return 0 }
 
-  if (maxScroll === 0) {
-    return 0
-  } else {
-    return scrollTop / maxScroll
-  }
+  const scrollPercent = scrollTop / (scrollHeight - clientHeight)
+  const scrollPercentClamped = Math.min(Math.max(0, scrollPercent), 1)
+
+  return scrollPercentClamped
 }
 
 /**
