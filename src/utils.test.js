@@ -106,9 +106,11 @@ describe('xeqBy', () => {
 })
 
 describe('scrollPercentX', () => {
-  Object.defineProperty(document.documentElement, 'scrollLeft', { value: 50 })
-  Object.defineProperty(document.documentElement, 'scrollWidth', { value: 200 })
-  Object.defineProperty(document.documentElement, 'clientWidth', { value: 100 })
+  Object.defineProperties(document.documentElement, {
+    scrollLeft: { value: 50 },
+    scrollWidth: { value: 200 },
+    clientWidth: { value: 100 }
+  })
 
   it('returns the horizontal scroll percentage', () => {
     expect(scrollPercentX()).toBe(0.5)
@@ -116,45 +118,52 @@ describe('scrollPercentX', () => {
 })
 
 describe('scrollPercentY', () => {
-  describe('with standard values', () => {
-    it('returns the vertical scroll percentage', () => {
-      Object.defineProperty(document.documentElement, 'scrollTop', { value: 50, configurable: true })
-      Object.defineProperty(document.documentElement, 'scrollHeight', { value: 200, configurable: true })
-      Object.defineProperty(document.documentElement, 'clientHeight', { value: 100, configurable: true })
+  describe('scrollTop is half way through the document', () => {
+    it('returns 0.5', () => {
+      Object.defineProperties(document.documentElement, {
+        scrollTop: { value: 50, configurable: true },
+        scrollHeight: { value: 200, configurable: true },
+        clientHeight: { value: 100, configurable: true }
+      })
 
       expect(scrollPercentY()).toBe(0.5)
     })
   })
 
-  // Webkit/iOS can return negative scroll values for a scroll postition
-  // preceeding the scroll space.
-  describe('with values preceeding the scroll space', () => {
-    it('returns the vertical scroll percentage of 0', () => {
-      Object.defineProperty(document.documentElement, 'scrollTop', { value: -5, configurable: true })
-      Object.defineProperty(document.documentElement, 'scrollHeight', { value: 200, configurable: true })
-      Object.defineProperty(document.documentElement, 'clientHeight', { value: 100, configurable: true })
+  // Webkit/iOS can return scroll values less than zero
+  describe('scrollTop has a negative value', () => {
+    it('clamps the return value to 0', () => {
+      Object.defineProperties(document.documentElement, {
+        scrollTop: { value: -5, configurable: true },
+        scrollHeight: { value: 200, configurable: true },
+        clientHeight: { value: 100, configurable: true }
+      })
 
       expect(scrollPercentY()).toBe(0)
     })
   })
 
-  // Webkit/iOS can return scroll values > than the scroll space
-  // for a scroll postition proceeding the scroll space.
-  describe('with values preceeding the scroll space', () => {
-    it('returns the vertical scroll percentage of 1', () => {
-      Object.defineProperty(document.documentElement, 'scrollTop', { value: 105, configurable: true })
-      Object.defineProperty(document.documentElement, 'scrollHeight', { value: 200, configurable: true })
-      Object.defineProperty(document.documentElement, 'clientHeight', { value: 100, configurable: true })
+  // Webkit/iOS can return scroll values greater than the
+  // total height of the document
+  describe('scrollTop exceeds the height of the document', () => {
+    it('clamps the return value to 1', () => {
+      Object.defineProperties(document.documentElement, {
+        scrollTop: { value: 105, configurable: true },
+        scrollHeight: { value: 200, configurable: true },
+        clientHeight: { value: 100, configurable: true }
+      })
 
       expect(scrollPercentY()).toBe(1)
     })
   })
 
-  describe('when scrollHeight equals the clientHeight', () => {
-    it('returns the vertical scroll percentage of 1', () => {
-      Object.defineProperty(document.documentElement, 'scrollTop', { value: 0, configurable: true })
-      Object.defineProperty(document.documentElement, 'scrollHeight', { value: 100, configurable: true })
-      Object.defineProperty(document.documentElement, 'clientHeight', { value: 100, configurable: true })
+  describe('scrollTop is zero', () => {
+    it('returns 0', () => {
+      Object.defineProperties(document.documentElement, {
+        scrollTop: { value: 0, configurable: true },
+        scrollHeight: { value: 200, configurable: true },
+        clientHeight: { value: 100, configurable: true }
+      })
 
       expect(scrollPercentY()).toBe(0)
     })
