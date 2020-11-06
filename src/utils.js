@@ -12,6 +12,15 @@ function escapeRegExp (s) {
 }
 
 /**
+ * Clamps the given value between min and max.
+ *
+ * @private
+ */
+function clamp (value, min, max) {
+  return Math.min(Math.max(min, value || 0), max)
+}
+
+/**
  * Returns the current timestamp.
  *
  * @returns {String} The ISO8601 date string.
@@ -121,13 +130,9 @@ export function scrollPercentX () {
  */
 export function scrollPercentY () {
   const { clientHeight, scrollHeight, scrollTop } = document.documentElement || document.body
-
-  if (!scrollTop) { return 0 }
-
   const scrollPercent = scrollTop / (scrollHeight - clientHeight)
-  const scrollPercentClamped = Math.min(Math.max(0, scrollPercent), 1)
 
-  return scrollPercentClamped
+  return clamp(scrollPercent, 0, 1)
 }
 
 /**
