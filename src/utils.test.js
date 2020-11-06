@@ -168,6 +168,18 @@ describe('scrollPercentY', () => {
       expect(scrollPercentY()).toBe(0)
     })
   })
+
+  describe('scrollTop is half way when scrollHeight equals clientHeight', () => {
+    it('returns 1', () => {
+      Object.defineProperties(document.documentElement, {
+        scrollTop: { value: 50, configurable: true },
+        scrollHeight: { value: 100, configurable: true },
+        clientHeight: { value: 100, configurable: true }
+      })
+
+      expect(scrollPercentY()).toBe(1.0)
+    })
+  })
 })
 
 describe('seedGenerator', () => {
