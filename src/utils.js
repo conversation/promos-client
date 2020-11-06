@@ -116,9 +116,10 @@ export const xeqBy = f => (a, b) => {
  * @return {Number} The scroll amount in percent.
  */
 export function scrollPercentX () {
-  const a = document.documentElement
-  const b = document.body
-  return (a.scrollLeft || b.scrollLeft) / ((a.scrollWidth || b.scrollWidth) - a.clientWidth)
+  const { clientWidth, scrollWidth, scrollLeft } = document.documentElement || document.body
+  const scrollPercent = scrollLeft / (scrollWidth - clientWidth)
+
+  return clamp(scrollPercent, 0, 1)
 }
 
 /**
