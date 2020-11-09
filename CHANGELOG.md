@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 5.2.0 (2020-11-09)
+
+* Prevent iOS overscrolling (https://github.com/conversation/promos-client/pull/24)
+
 ## 5.1.0 (2020-09-08)
 
 * Use default user state if `localStorage` isn't available
