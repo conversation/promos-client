@@ -12,6 +12,15 @@ function escapeRegExp (s) {
 }
 
 /**
+ * Clamps the given value between min and max.
+ *
+ * @private
+ */
+function clamp (value, min, max) {
+  return Math.min(Math.max(min, value || 0), max)
+}
+
+/**
  * Returns the current timestamp.
  *
  * @returns {String} The ISO8601 date string.
@@ -107,9 +116,10 @@ export const xeqBy = f => (a, b) => {
  * @return {Number} The scroll amount in percent.
  */
 export function scrollPercentX () {
-  const a = document.documentElement
-  const b = document.body
-  return (a.scrollLeft || b.scrollLeft) / ((a.scrollWidth || b.scrollWidth) - a.clientWidth)
+  const { clientWidth, scrollWidth, scrollLeft } = document.documentElement || document.body
+  const scrollPercent = scrollLeft / (scrollWidth - clientWidth)
+
+  return clamp(scrollPercent, 0, 1)
 }
 
 /**
@@ -120,9 +130,10 @@ export function scrollPercentX () {
  * @return {Number} The scroll amount in percent.
  */
 export function scrollPercentY () {
-  const a = document.documentElement
-  const b = document.body
-  return (a.scrollTop || b.scrollTop) / ((a.scrollHeight || b.scrollHeight) - a.clientHeight)
+  const { clientHeight, scrollHeight, scrollTop } = document.documentElement || document.body
+  const scrollPercent = scrollTop / (scrollHeight - clientHeight)
+
+  return clamp(scrollPercent, 0, 1)
 }
 
 /**
