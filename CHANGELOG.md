@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Expose the CQL Parser
+
 ## 5.2.0 (2020-11-09)
 
 * Prevent iOS overscrolling (https://github.com/conversation/promos-client/pull/24)
