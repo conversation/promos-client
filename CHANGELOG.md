@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 5.3.0 (2020-11-26)
+
 * Expose the CQL Parser
 
 ## 5.2.0 (2020-11-09)
