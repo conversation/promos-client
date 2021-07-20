@@ -27,7 +27,6 @@ describe('stateMachine', () => {
     { promoId: 2, groupId: 1, campaignId: 1 },
     { promoId: 3, campaignId: 1 }
   ]
-  const emit = { next: jest.fn() }
   const storage = mockStorage()
 
   beforeEach(() => {
@@ -41,11 +40,18 @@ describe('stateMachine', () => {
     }
   })
 
-  describe('with any event', () => {
-    const event = {}
+  describe('with an unknown event', () => {
+    it('returns no promos', () => {
+      const event = {}
+      const result = stateMachine(storage, promos)(state, event)
+      expect(result.promos).toBeNull()
+    })
+  })
 
-    it('loads and stores the user state', () => {
-      stateMachine(storage, promos)(state, event, emit)
+  describe('with any event', () => {
+    it('sets the user state', () => {
+      const event = {}
+      stateMachine(storage, promos)(state, event)
       expect(setUser).toHaveBeenLastCalledWith(storage, state.user)
     })
   })
@@ -53,14 +59,14 @@ describe('stateMachine', () => {
   describe('with a visit event', () => {
     const event = { type: 'visit' }
 
-    it('emits the placed promos', () => {
-      stateMachine(storage, promos)(state, event, emit)
-      expect(emit.next).toHaveBeenLastCalledWith({ promos })
+    it('returns the placed promos', () => {
+      const result = stateMachine(storage, promos)(state, event)
+      expect(result.promos).toBe(promos)
     })
 
     it('increments the number of visits', () => {
       expect(state).toHaveProperty('user.visits', 1)
-      state = stateMachine(storage, promos)(state, event, emit)
+      state = stateMachine(storage, promos)(state, event)
       expect(state).toHaveProperty('user.visits', 2)
     })
   })
@@ -71,14 +77,14 @@ describe('stateMachine', () => {
       promo: { promoId: 1, groupId: 1, campaignId: 1 }
     }
 
-    it('emits the placed promos', () => {
-      stateMachine(storage, promos)(state, event, emit)
-      expect(emit.next).toHaveBeenLastCalledWith({ promos })
+    it('returns no promos', () => {
+      const result = stateMachine(storage, promos)(state, event)
+      expect(result.promos).toBeNull()
     })
 
     it('updates the campaign engagements', () => {
       expect(state).not.toHaveProperty('user.engagements.campaigns')
-      state = stateMachine(storage, promos)(state, event, emit)
+      state = stateMachine(storage, promos)(state, event)
       expect(state).toHaveProperty('user.engagements.campaigns', {
         1: { count: 1, timestamp: '123' }
       })
@@ -86,7 +92,7 @@ describe('stateMachine', () => {
 
     it('updates the group engagements', () => {
       expect(state).not.toHaveProperty('user.engagements.groups')
-      state = stateMachine(storage, promos)(state, event, emit)
+      state = stateMachine(storage, promos)(state, event)
       expect(state).toHaveProperty('user.engagements.groups', {
         1: { count: 1, timestamp: '123' }
       })
@@ -94,7 +100,7 @@ describe('stateMachine', () => {
 
     it('updates the promo engagements', () => {
       expect(state).not.toHaveProperty('user.engagements.promos')
-      state = stateMachine(storage, promos)(state, event, emit)
+      state = stateMachine(storage, promos)(state, event)
       expect(state).toHaveProperty('user.engagements.promos', {
         1: { count: 1, timestamp: '123' }
       })
@@ -107,14 +113,14 @@ describe('stateMachine', () => {
       promo: { promoId: 1, groupId: 1, campaignId: 1 }
     }
 
-    it('emits the placed promos', () => {
-      stateMachine(storage, promos)(state, event, emit)
-      expect(emit.next).toHaveBeenLastCalledWith({ promos })
+    it('returns no promos', () => {
+      const result = stateMachine(storage, promos)(state, event)
+      expect(result.promos).toBeNull()
     })
 
     it('updates the blocked campaigns', () => {
       expect(state).not.toHaveProperty('user.blocked.campaigns')
-      state = stateMachine(storage, promos)(state, event, emit)
+      state = stateMachine(storage, promos)(state, event)
       expect(state).toHaveProperty('user.blocked.campaigns', {
         1: { count: 1, timestamp: '123' }
       })
@@ -122,7 +128,7 @@ describe('stateMachine', () => {
 
     it('updates the blocked groups', () => {
       expect(state).not.toHaveProperty('user.blocked.groups')
-      state = stateMachine(storage, promos)(state, event, emit)
+      state = stateMachine(storage, promos)(state, event)
       expect(state).toHaveProperty('user.blocked.groups', {
         1: { count: 1, timestamp: '123' }
       })
@@ -130,7 +136,7 @@ describe('stateMachine', () => {
 
     it('updates the blocked promos', () => {
       expect(state).not.toHaveProperty('user.blocked.promos')
-      state = stateMachine(storage, promos)(state, event, emit)
+      state = stateMachine(storage, promos)(state, event)
       expect(state).toHaveProperty('user.blocked.promos', {
         1: { count: 1, timestamp: '123' }
       })
@@ -143,14 +149,14 @@ describe('stateMachine', () => {
       promo: { promoId: 1, groupId: 1, campaignId: 1 }
     }
 
-    it('emits the placed promos', () => {
-      stateMachine(storage, promos)(state, event, emit)
-      expect(emit.next).toHaveBeenLastCalledWith({ promos })
+    it('returns no promos', () => {
+      const result = stateMachine(storage, promos)(state, event)
+      expect(result.promos).toBeNull()
     })
 
     it('updates the campaign impressions', () => {
       expect(state).not.toHaveProperty('user.impressions.campaigns')
-      state = stateMachine(storage, promos)(state, event, emit)
+      state = stateMachine(storage, promos)(state, event)
       expect(state).toHaveProperty('user.impressions.campaigns', {
         1: { count: 1, timestamp: '123' }
       })
@@ -158,7 +164,7 @@ describe('stateMachine', () => {
 
     it('updates the group impressions', () => {
       expect(state).not.toHaveProperty('user.impressions.groups')
-      state = stateMachine(storage, promos)(state, event, emit)
+      state = stateMachine(storage, promos)(state, event)
       expect(state).toHaveProperty('user.impressions.groups', {
         1: { count: 1, timestamp: '123' }
       })
@@ -166,7 +172,7 @@ describe('stateMachine', () => {
 
     it('updates the promo impressions', () => {
       expect(state).not.toHaveProperty('user.impressions.promos')
-      state = stateMachine(storage, promos)(state, event, emit)
+      state = stateMachine(storage, promos)(state, event)
       expect(state).toHaveProperty('user.impressions.promos', {
         1: { count: 1, timestamp: '123' }
       })
