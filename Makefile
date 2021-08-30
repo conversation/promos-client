@@ -7,7 +7,9 @@ parser:
 	@npx jison src/parser.jison -o src/parser.js -m commonjs
 
 dist:
-	@npx babel --copy-files --out-dir dist src
+	@mkdir -p dist/cjs dist/esm
+	@npx babel --copy-files --out-dir dist/cjs src
+	@cp -r src/* dist/esm
 
 test:
 	@npx jest
