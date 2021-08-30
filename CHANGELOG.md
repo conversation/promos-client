@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 5.4.0 (2021-08-30)
+
+* Target ES modules (https://github.com/conversation/promos-client/pull/35)
+
 ## 5.3.0 (2020-11-26)
 
 * Expose the CQL Parser
