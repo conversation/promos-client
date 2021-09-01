@@ -1,5 +1,5 @@
-import Bus from 'bulb/dist/Bus'
-
+import { Subject } from 'rxjs'
+import { filter, map, scan, startWith } from 'rxjs/operators'
 import groupBy from 'fkit/dist/groupBy'
 import keys from 'fkit/dist/keys'
 import set from 'fkit/dist/set'
@@ -45,35 +45,39 @@ function placementEngine (storage, promos, custom = {}) {
   // Load the user state.
   const user = getUser(storage)
 
-  // Create the bus signal.
-  const bus = new Bus()
+  // Create the subject.
+  const subject = new Subject()
 
-  // A function that emits a `click` event on the bus.
-  const onClick = promo => bus.next({ type: 'click', promo })
+  // A function that emits a `click` event on the subject.
+  const onClick = promo => subject.next({ type: 'click', promo })
 
-  // A function that emits a `close` event on the bus.
-  const onClose = promo => bus.next({ type: 'close', promo })
+  // A function that emits a `close` event on the subject.
+  const onClose = promo => subject.next({ type: 'close', promo })
 
-  // A function that emits a `view` event on the bus.
-  const onView = promo => bus.next({ type: 'view', promo })
+  // A function that emits a `view` event on the subject.
+  const onView = promo => subject.next({ type: 'view', promo })
 
-  // A function that emits a `refresh` event on the bus.
-  const onRefresh = promo => bus.next({ type: 'refresh', promo })
+  // A function that emits a `refresh` event on the subject.
+  const onRefresh = promo => subject.next({ type: 'refresh', promo })
 
   // Create the initial state object.
   const initialState = { seeds, user }
 
-  // The stateful signal emits the current placement engine state whenever an
-  // event is emitted on the bus.
-  const statefulSignal = bus
-    // Emit an initial `visit` event on the bus.
-    .startWith({ type: 'visit' })
+  // The stateful signal emits the current placement engine state whenever an event is emitted on
+  // the subject.
+  const statefulSignal = subject
+    .pipe(
+      startWith({ type: 'visit' }),
 
-    // Run the state machine function over the events emitted on the bus.
-    .stateMachine(stateMachine(storage, promos, custom), initialState)
+      // Run the state machine function over the events emitted on the bus.
+      scan(stateMachine(storage, promos, custom), initialState),
 
-    // Emit the placed promos and callback functions.
-    .map(({ promos }) => ({ promos, onClick, onClose, onView, onRefresh }))
+      // Don't emit the state if it doesn't contain any promos.
+      filter(({ promos }) => promos),
+
+      // Emit the placed promos and callback functions.
+      map(({ promos }) => ({ promos, onClick, onClose, onView, onRefresh }))
+    )
 
   return statefulSignal
 }

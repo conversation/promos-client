@@ -19,9 +19,8 @@ describe('placementEngine', () => {
 
   getUser.mockReturnValue(user)
 
-  const innerMock = jest.fn((state, event, emit) => {
-    emit.next({ promos })
-    return state
+  const innerMock = jest.fn((state, event) => {
+    return { promos, ...state }
   })
 
   // The stateMachine function is curried, so we need to return the inner mocked
@@ -59,9 +58,10 @@ describe('placementEngine', () => {
   })
 
   it('handles the onClick callback', done => {
+    const storage = mockStorage()
     let onClick
 
-    placementEngine(mockStorage, promos)
+    placementEngine(storage, promos)
       .subscribe(state => {
         onClick = state.onClick
       })
