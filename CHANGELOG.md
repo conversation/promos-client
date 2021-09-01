@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 5.5.0 (2021-09-01)
+
+* Replace Replace Bulb with RxJS (https://github.com/conversation/promos-client/pull/34)
+
 ## 5.4.0 (2021-08-30)
 
 * Target ES modules (https://github.com/conversation/promos-client/pull/35)
