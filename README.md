@@ -1,6 +1,6 @@
 # Promos Client
 
-[![Build Status](https://travis-ci.com/conversation/promos-client.svg?branch=master)](https://travis-ci.com/conversation/promos-client)
+![Build status](https://github.com/conversation/promos-client/actions/workflows/test.yml/badge.svg?branch=main)
 
 The promos client provides a placement engine for placing promos into slots on a page.
 
