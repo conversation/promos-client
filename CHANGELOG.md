@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Fix esm build so that it works with webpack 5
+
 ## 5.5.0 (2021-09-01)
 
 * Replace Replace Bulb with RxJS (https://github.com/conversation/promos-client/pull/34)
