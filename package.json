@@ -14,12 +14,6 @@
     "test": "jest",
     "lint": "standard"
   },
-  "exports": {
-    ".": {
-      "import": "./dist/mjs/index.js",
-      "require": "./dist/cjs/index.js"
-    }
-  },
   "files": [
     "dist"
   ],
