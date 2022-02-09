@@ -8,8 +8,8 @@ parser:
 
 dist:
 	@mkdir -p dist/cjs dist/esm
-	@npx babel --copy-files --out-dir dist/cjs src
-	@cp -r src/* dist/esm
+	@npx babel --delete-dir-on-start --copy-files --out-dir dist/cjs src
+	@npx babel --delete-dir-on-start --copy-files --env-name esm --out-dir dist/esm src
 
 test:
 	@npx jest
