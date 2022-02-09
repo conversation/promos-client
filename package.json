@@ -14,18 +14,16 @@
     "test": "jest",
     "lint": "standard"
   },
-  "exports": {
-    ".": {
-      "import": "./dist/mjs/index.js",
-      "require": "./dist/cjs/index.js"
-    }
-  },
   "files": [
     "dist"
   ],
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/conversation/promos-client.git"
+  },
+  "browser": {
+    "fs": false,
+    "path": false
   },
   "dependencies": {
     "fkit": "^3.4.0",
