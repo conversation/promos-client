@@ -1,7 +1,12 @@
 module.exports = api => {
-  const env = api.cache(() => process.env.NODE_ENV)
-  const ignore = env === 'test' ? [] : [/test\.jsx?$/]
+  const nodeEnv = api.cache(() => process.env.NODE_ENV)
+  const ignore = nodeEnv === 'test' ? [] : [/test\.jsx?$/]
   const presets = ['@babel/preset-env']
+  const env = {
+    esm: {
+      presets: [['@babel/preset-env', { modules: false }]]
+    }
+  }
 
-  return { ignore, presets }
+  return { ignore, presets, env }
 }
