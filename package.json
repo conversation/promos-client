@@ -21,6 +21,10 @@
     "type": "git",
     "url": "git+ssh://git@github.com/conversation/promos-client.git"
   },
+  "browser": {
+    "fs": false,
+    "path": false
+  },
   "dependencies": {
     "fkit": "^3.4.0",
     "rxjs": "^7.3.0",
