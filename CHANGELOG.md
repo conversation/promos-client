@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 6.0.0 (2022-02-09)
+
 * Fix esm build so that it works with webpack 5
 
 ## 5.5.0 (2021-09-01)
