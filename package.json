@@ -12,7 +12,10 @@
   "module": "dist/esm/index.js",
   "scripts": {
     "test": "jest",
-    "lint": "standard"
+    "lint": "standard",
+    "build": "npm run build:cjs && npm run build:esm",
+    "build:cjs": "babel --delete-dir-on-start --copy-files --out-dir dist/cjs src",
+    "build:esm": "babel --delete-dir-on-start --copy-files --env-name esm --out-dir dist/esm src"
   },
   "files": [
     "dist"
