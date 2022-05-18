@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 6.1.0 (2022-05-18)
+
+* Export the `DEFAULT_USER_STATE` constant (https://github.com/conversation/promos-client/pull/44)
+
 ## 6.0.1 (2022-02-14)
 
 * Fix release packaging
