@@ -178,4 +178,23 @@ describe('stateMachine', () => {
       })
     })
   })
+
+  describe('with a donationsLoaded event', () => {
+    const event = {
+      type: 'donationsLoaded',
+      donations: { custom: 'field' }
+    }
+
+    it('updates the custom fields', () => {
+      expect(state).not.toHaveProperty('user.donations')
+      state = stateMachine(storage, promos)(state, event)
+      expect(state).toHaveProperty('user.donations.custom', 'field')
+    })
+
+    it('makes no change to other fields', () => {
+      expect(state).toHaveProperty('user.visits', 1)
+      state = stateMachine(storage, promos)(state, event)
+      expect(state).toHaveProperty('user.visits', 1)
+    })
+  })
 })
