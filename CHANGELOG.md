@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 6.2.0 (2022-05-31)
+
+* Add TypeScript module declaration (`types.d.ts`)
+
 ## 6.1.0 (2022-05-18)
 
 * Export the `DEFAULT_USER_STATE` constant (https://github.com/conversation/promos-client/pull/44)
