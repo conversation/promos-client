@@ -1,6 +1,6 @@
 {
   "name": "@theconversation/promos-client",
-  "version": "6.2.0",
+  "version": "6.3.0",
   "description": "Provides various functions for querying The Conversation's promos API",
   "author": "The Conversation <platform@theconversation.com>",
   "license": "MIT",

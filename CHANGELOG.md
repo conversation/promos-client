@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 6.3.0 (2022-06-01)
+
+* Add `donationsLoaded` event handler (https://github.com/conversation/promos-client/pull/46)
+
 ## 6.2.0 (2022-05-31)
 
 * Add TypeScript module declaration (`types.d.ts`)
