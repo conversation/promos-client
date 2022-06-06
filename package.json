@@ -19,7 +19,8 @@
     "build:esm": "babel --delete-dir-on-start --copy-files --env-name esm --out-dir dist/esm src"
   },
   "files": [
-    "dist"
+    "dist",
+    "types.d.ts"
   ],
   "repository": {
     "type": "git",

@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Include `types.d.ts` in module distribution (adding its reference to `package.json` `files` field)
+
 ## 6.3.0 (2022-06-01)
 
 * Add `donationsLoaded` event handler (https://github.com/conversation/promos-client/pull/46)
