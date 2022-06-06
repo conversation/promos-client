@@ -1,6 +1,8 @@
 ## Unreleased
 
-* Include `types.d.ts` in module distribution (adding its reference to `package.json` `files` field)
+## 6.3.1 (2022-06-06)
+
+* Include `types.d.ts` in module distribution (adding its reference to `package.json` `files` field) (https://github.com/conversation/promos-client/pull/47)
 
 ## 6.3.0 (2022-06-01)
 
