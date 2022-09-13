@@ -13,7 +13,7 @@ import runQuery from './runQuery'
 import { choose, prng, xeqBy } from './utils'
 
 // The properties to copy from a promo into a context.
-const PROMO_PROPERTIES = ['creativeId', 'promoId', 'slotId', 'groupId', 'campaignId']
+const PROMO_PROPERTIES = ['creativeId', 'promoId', 'slotId', 'groupId', 'campaignId', 'type']
 
 /**
  * Returns `true` if the promo's constraints are satisfied in the given context,
