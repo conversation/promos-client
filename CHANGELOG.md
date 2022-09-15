@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 6.4.0 (2022-09-15)
+
+* Pass promo types to the promos engine context (https://github.com/conversation/promos-client/pull/48)
+
 ## 6.3.1 (2022-06-06)
 
 * Include `types.d.ts` in module distribution (adding its reference to `package.json` `files` field) (https://github.com/conversation/promos-client/pull/47)
