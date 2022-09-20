@@ -25,6 +25,8 @@
 "in"|"IN"                    { return 'IN'; }
 "like"|"LIKE"                { return 'LIKE'; }
 [0-9]+(\.[0-9]+)?            { return 'NUMBER'; }
+"null"                       { return 'NULL'; }
+"undefined"                  { return 'UNDEFINED'; }
 \"[^\"]*\"                   { return 'STRING'; }
 [A-Za-z_$][A-Za-z0-9_]*      { return 'IDENTIFIER'; }
 "("                          { return '('; }
@@ -82,6 +84,8 @@ predicate
 
 value
   : number_literal
+  | null_literal
+  | undefined_literal
   | bool_literal
   | string_literal
   | array_literal
@@ -92,6 +96,14 @@ value
 value_list
   : value
   | value_list ',' value { $$ = $1 + $2 + $3; }
+  ;
+
+null_literal
+  : 'NULL' { $$ = null; }
+  ;
+
+undefined_literal
+  : 'UNDEFINED' { $$ = undefined; }
   ;
 
 number_literal
