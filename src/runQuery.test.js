@@ -219,4 +219,18 @@ describe('runQuery', () => {
     expect(runQuery('a + b + c = 1 + (2 + 3)', context)).toBe(true)
     expect(runQuery('c - b < c - a', context)).toBe(true)
   })
+
+  it('handles null values', () => {
+    const context = { a: null }
+
+    expect(runQuery('a = null', context)).toBe(true)
+    expect(runQuery('a != null', context)).toBe(false)
+  })
+
+  it('handles undefined values', () => {
+    const context = { a: undefined }
+
+    expect(runQuery('a = undefined', context)).toBe(true)
+    expect(runQuery('a != undefined', context)).toBe(false)
+  })
 })
