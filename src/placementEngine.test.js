@@ -47,9 +47,9 @@ describe('placementEngine', () => {
     placementEngine(storage, promos)
       .subscribe(state => {
         expect(state.promos).toEqual(promos)
-        expect(stateMachine).toHaveBeenLastCalledWith(storage, promos, {})
+        expect(stateMachine).toHaveBeenLastCalledWith(storage, promos)
         expect(innerMock).toHaveBeenLastCalledWith(
-          { seeds, user },
+          { seeds, user, custom: {} },
           { type: 'visit' },
           expect.anything()
         )

@@ -1,6 +1,7 @@
 import mockStorage from './mockStorage'
 import stateMachine from './stateMachine'
 import { setUser } from './userState'
+import createContext from './createContext'
 
 // Mock the createContext function.
 jest.mock('./createContext', () => jest.fn((user) => ({ user })))
@@ -68,6 +69,26 @@ describe('stateMachine', () => {
       expect(state).toHaveProperty('user.visits', 1)
       state = stateMachine(storage, promos)(state, event)
       expect(state).toHaveProperty('user.visits', 2)
+    })
+  })
+
+  describe('with a refresh event', () => {
+    it('returns the custom state object', () => {
+      const event = { type: 'refresh' }
+
+      state = { ...state, custom: { context: 'custom context' } }
+      state = stateMachine(storage, promos)(state, event)
+
+      expect(state.custom).toEqual({ context: 'custom context' })
+    })
+
+    it('replaces the custom state object with the context of the event', () => {
+      const event = { type: 'refresh', custom: { event: 'custom context from the event' } }
+
+      state = { ...state, custom: { context: 'custom context' } }
+      stateMachine(storage, promos)(state, event)
+
+      expect(createContext).toHaveBeenLastCalledWith(state.user, { event: 'custom context from the event' })
     })
   })
 

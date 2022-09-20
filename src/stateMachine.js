@@ -26,12 +26,12 @@ const trackEngagement = incrementCounters('engagements')
  *
  * @param {Storage} storage The storage object.
  * @param {Array} promos The list of promos.
- * @param {Object} custom The custom state object.
  * @returns A new state.
  */
-export default function stateMachine (storage, promos, custom = {}) {
-  return ({ seeds, user }, event) => {
+export default function stateMachine (storage, promos) {
+  return ({ seeds, user, custom }, event) => {
     const ts = timestamp()
+    const customState = event.custom || custom
 
     // Update the user state based on the event type.
     if (event.type === 'visit') {
@@ -50,13 +50,13 @@ export default function stateMachine (storage, promos, custom = {}) {
 
     // Place and emit the promos.
     if (event.type === 'visit' || event.type === 'refresh') {
-      const context = createContext(user, custom)
+      const context = createContext(user, customState)
       placedPromos = placePromos(seeds, promos, context)
     }
 
     // Store the user state as a side effect.
     setUser(storage, user)
 
-    return { seeds, user, promos: placedPromos }
+    return { seeds, user, custom: customState, promos: placedPromos }
   }
 }
