@@ -58,7 +58,7 @@ function placementEngine (storage, promos, custom = {}) {
   const onView = promo => subject.next({ type: 'view', promo })
 
   // A function that emits a `refresh` event on the subject.
-  const onRefresh = promo => subject.next({ type: 'refresh', promo })
+  const onRefresh = () => subject.next({ type: 'refresh' })
 
   // Create the initial state object.
   const initialState = { seeds, user, custom }
