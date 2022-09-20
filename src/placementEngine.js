@@ -58,10 +58,10 @@ function placementEngine (storage, promos, custom = {}) {
   const onView = promo => subject.next({ type: 'view', promo })
 
   // A function that emits a `refresh` event on the subject.
-  const onRefresh = promo => subject.next({ type: 'refresh', promo })
+  const onRefresh = () => subject.next({ type: 'refresh' })
 
   // Create the initial state object.
-  const initialState = { seeds, user }
+  const initialState = { seeds, user, custom }
 
   // The stateful signal emits the current placement engine state whenever an event is emitted on
   // the subject.
@@ -70,7 +70,7 @@ function placementEngine (storage, promos, custom = {}) {
       startWith({ type: 'visit' }),
 
       // Run the state machine function over the events emitted on the bus.
-      scan(stateMachine(storage, promos, custom), initialState),
+      scan(stateMachine(storage, promos), initialState),
 
       // Don't emit the state if it doesn't contain any promos.
       filter(({ promos }) => promos),
