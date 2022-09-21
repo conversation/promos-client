@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 6.5.0 (2022-09-21)
+
+* Allow the CQL parser to know about `undefined` and `null` values (https://github.com/conversation/promos-client/pull/50)
+* Allow the placement engine refresh event to pass a custom context (https://github.com/conversation/promos-client/pull/51)
+
 ## 6.4.0 (2022-09-15)
 
 * Pass promo types to the promos engine context (https://github.com/conversation/promos-client/pull/48)
