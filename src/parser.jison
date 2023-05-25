@@ -22,6 +22,7 @@
 "-"                          { return '-'; }
 "*"                          { return '*'; }
 "/"                          { return '/'; }
+"%"                          { return '%'; }
 "in"|"IN"                    { return 'IN'; }
 "like"|"LIKE"                { return 'LIKE'; }
 [0-9]+(\.[0-9]+)?            { return 'NUMBER'; }
@@ -44,7 +45,7 @@
 %left '=' '!=' '=~' '!~'
 %left '<' '<=' '>' '>='
 %left '+' '-'
-%left '*' '/'
+%left '*' '/' '%'
 
 %start expr_list
 
@@ -74,6 +75,7 @@ predicate
   | expr '-' expr { $$ = $1 + $2 + $3; }
   | expr '*' expr { $$ = $1 + $2 + $3; }
   | expr '/' expr { $$ = $1 + $2 + $3; }
+  | expr '%' expr { $$ = $1 + $2 + $3; }
   | value IN value { $$ = "_helpers['has'](" + $3 + "," + $1 + ")"; }
   | value NOT IN value { $$ = "!_helpers['has'](" + $4 + "," + $1 + ")"; }
   | value LIKE value { $$ = "_helpers['like'](" + $1 + "," + $3 + ")"; }
