@@ -116,6 +116,7 @@ describe('runQuery', () => {
     expect(runQuery('a - 2', context)).toBe(-1)
     expect(runQuery('a * 2', context)).toBe(2)
     expect(runQuery('a / 2', context)).toBe(0.5)
+    expect(runQuery('a % 2', context)).toBe(1)
 
     expect(runQuery('1 + 2 * 3')).toBe(7)
     expect(runQuery('1 + (2 * 3)')).toBe(7)
