@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 6.6.0 (2023-05-25)
+
+* Add modulo operator to CQL
+
 ## 6.5.0 (2022-09-21)
 
 * Allow the CQL parser to know about `undefined` and `null` values (https://github.com/conversation/promos-client/pull/50)
