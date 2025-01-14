@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 6.7.0 (2025-01-15)
+
+* limit one promo per slot
+
 ## 6.6.0 (2023-05-25)
 
 * Add modulo operator to CQL
