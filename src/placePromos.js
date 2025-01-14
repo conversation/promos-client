@@ -66,6 +66,19 @@ const chunkPromosByGroupId = chunkBy(xeqBy(get('groupId')))
 const chooseOnePromoFromEachGroup = seeds => map(group => choose(prng(seeds[group[0].groupId]), group))
 
 /**
+ * Chooses the first promo for each slot
+ *
+ * Only one promo from each slot may be placed at the same time. We're leveraging the randomness of groups to avoid piping additional seeds
+ * to this function to make it random.
+ *
+ * @private
+ */
+function chooseFirstPromoPerSlot (promos) {
+  const slotsUsed = new Set()
+  return promos.filter(({ slotId }) => slotId === undefined || (!slotsUsed.has(slotId) && slotsUsed.add(slotId)))
+}
+
+/**
  * Places the promos based on the following rules:
  *
  *   - Promos with satisfied constraints will be placed, otherwise they are skipped.
@@ -86,7 +99,8 @@ function placePromos (seeds, promos, context) {
     filterPromos(context),
     sortPromosByGroupId,
     chunkPromosByGroupId,
-    chooseOnePromoFromEachGroup(seeds)
+    chooseOnePromoFromEachGroup(seeds),
+    chooseFirstPromoPerSlot
   ])
 
   return pipeline(promos)
