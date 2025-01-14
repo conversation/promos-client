@@ -2,8 +2,9 @@ import placePromos from './placePromos'
 
 describe('placePromos', () => {
   const seed = 123
-  const a = { promoId: 1, groupId: null }
-  const b = { promoId: 2, groupId: null }
+  const a = { promoId: 1, groupId: null, slotId: 1 }
+  const b = { promoId: 2, groupId: null, slotId: 2 }
+  const bb = { promoId: 22, groupId: null, slotId: 2 }
   const c = { promoId: 3, groupId: 1 }
   const d = { promoId: 4, groupId: 1 }
   const e = { promoId: 5, groupId: 2, constraints: 'x = "foo"' }
@@ -11,7 +12,7 @@ describe('placePromos', () => {
   const g = { promoId: 7, groupId: 3, constraints: 'x = promoId' }
   const h = { promoId: 8, groupId: 4, type: 'DesktopBanner', constraints: 'type = "DesktopBanner"' }
   const i = { promoId: 10, groupId: 4, type: 'MobileBanner', constraints: 'type = "DesktopBanner"' }
-  const promos = [a, b, c, d, e, f, g, h, i]
+  const promos = [a, b, bb, c, d, e, f, g, h, i]
 
   it('returns the promos that have satisfied constraints', () => {
     expect(placePromos(seed, promos, {})).toEqual([a, b, c, h])
