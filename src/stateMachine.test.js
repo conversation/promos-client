@@ -218,4 +218,23 @@ describe('stateMachine', () => {
       expect(state).toHaveProperty('user.visits', 1)
     })
   })
+
+  describe('with a newslettersLoaded event', () => {
+    const event = {
+      type: 'newslettersLoaded',
+      newsletters: { subscribedIdsOrAnythingReally: [1, 2, 3, 9] }
+    }
+
+    it('updates the custom fields', () => {
+      expect(state).not.toHaveProperty('user.newsletters')
+      state = stateMachine(storage, promos)(state, event)
+      expect(state).toHaveProperty('user.newsletters.subscribedIdsOrAnythingReally', [1, 2, 3, 9])
+    })
+
+    it('makes no change to other fields', () => {
+      expect(state).toHaveProperty('user.visits', 1)
+      state = stateMachine(storage, promos)(state, event)
+      expect(state).toHaveProperty('user.visits', 1)
+    })
+  })
 })

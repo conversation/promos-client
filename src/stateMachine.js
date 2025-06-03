@@ -44,6 +44,8 @@ export default function stateMachine (storage, promos) {
       user = trackImpression(ts, event.promo)(user)
     } else if (event.type === 'donationsLoaded') {
       user = { ...user, donations: event.donations }
+    } else if (event.type === 'newslettersLoaded') {
+      user = { ...user, newsletters: event.newsletters }
     }
 
     let placedPromos = null
