@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 6.8.0 (2025-06-04)
+
+* Add `newslettersLoaded` event handler so already subscribed newsletters can be constrained
+
 ## 6.7.0 (2025-01-15)
 
 * limit one promo per slot
