@@ -234,4 +234,45 @@ describe('runQuery', () => {
     expect(runQuery('a = undefined', context)).toBe(true)
     expect(runQuery('a != undefined', context)).toBe(false)
   })
+
+  describe('invalid queries', () => {
+    beforeEach(() => {
+      console.error = jest.fn()
+    })
+
+    afterEach(() => {
+      console.error.mockRestore()
+    })
+
+    it('handles mismatched brackets', () => {
+      expect(runQuery('1=2)', {})).toBe(false)
+      expect(runQuery('1=1)', {})).toBe(false)
+      expect(console.error).toHaveBeenCalledWith(expect.stringMatching(/is invalid and failed to get parsed/))
+    })
+
+    it('handles invalid operations', () => {
+      expect(runQuery('1/', {})).toBe(false)
+      expect(runQuery('1*', {})).toBe(false)
+      expect(runQuery('1+', {})).toBe(false)
+      expect(runQuery('1-', {})).toBe(false)
+      expect(runQuery('1-1+1*', {})).toBe(false)
+      expect(console.error).toHaveBeenCalledWith(expect.stringMatching(/is invalid and failed to get parsed/))
+    })
+
+    it('handles incomplete dot variable access', () => {
+      const context = { foo: 'bar' }
+
+      expect(runQuery('foo="bar"', context)).toBe(true)
+      expect(runQuery('foo.="bar"', context)).toBe(false)
+      expect(console.error).toHaveBeenCalledWith(expect.stringMatching(/is invalid and failed to get parsed/))
+    })
+
+    it('handles incomplete bracket variable access', () => {
+      const context = { foo: 'bar' }
+
+      expect(runQuery('foo="bar"', context)).toBe(true)
+      expect(runQuery('foo[="bar"', context)).toBe(false)
+      expect(console.error).toHaveBeenCalledWith(expect.stringMatching(/is invalid and failed to get parsed/))
+    })
+  })
 })
