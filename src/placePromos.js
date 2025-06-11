@@ -21,13 +21,23 @@ const PROMO_PROPERTIES = ['creativeId', 'promoId', 'slotId', 'groupId', 'campaig
  *
  * @private
  */
-const isSatisfied = context => promo => {
-  // Promos without constraints are passed through.
+const isSatisfied = (context, dataFields = []) => promo => {
   if (!promo.constraints) return true
 
-  // The local context copies several properties from the current promo.
-  const localContext = copy(context, pick(PROMO_PROPERTIES, promo))
+  const contextUpdate = {
+    ...pick(PROMO_PROPERTIES, promo)
+  }
+  // Only add the selected data fields to the context
+  if (promo.data && dataFields.length > 0) {
+    contextUpdate.data = {}
+    dataFields.forEach(field => {
+      if (promo.data[field] !== undefined) {
+        contextUpdate.data[field] = promo.data[field]
+      }
+    })
+  }
 
+  const localContext = copy(context, contextUpdate)
   return runQuery(promo.constraints, localContext)
 }
 
@@ -36,7 +46,7 @@ const isSatisfied = context => promo => {
  *
  * @private
  */
-const filterPromos = context => filter(isSatisfied(context))
+const filterPromos = (context, dataFields) => filter(isSatisfied(context, dataFields))
 
 /**
  * Sorts the promos by groupId.
@@ -93,10 +103,10 @@ function chooseFirstPromoPerSlot (promos) {
  * @param {Object} context The placement context.
  * @returns {Array} The list of placed promos.
  */
-function placePromos (seeds, promos, context) {
+function placePromos (seeds, promos, context, dataFields = {}) {
   // The pipeline contains the steps in the placement algorithm.
   const pipeline = pipe([
-    filterPromos(context),
+    filterPromos(context, dataFields),
     sortPromosByGroupId,
     chunkPromosByGroupId,
     chooseOnePromoFromEachGroup(seeds),

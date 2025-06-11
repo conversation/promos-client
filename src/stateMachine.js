@@ -19,6 +19,21 @@ const trackImpression = incrementCounters('impressions')
 // Tracks an engagement for the given promo.
 const trackEngagement = incrementCounters('engagements')
 
+// Gives the user the ability to specify data return types by name in a constraint. Eg. data.selectedNewsletter in a constraint will then pull
+// the selectedNewsletter property for use
+function extractDataFieldsFromPromos (promos) {
+  const fieldSet = new Set()
+  const regex = /data\.([a-zA-Z0-9_]+)/g // if the constraint contains data.XYZ pull the property from the query.
+  promos.forEach(promo => {
+    const constraint = promo.constraints || promo.query || ''
+    let match
+    while ((match = regex.exec(constraint)) !== null) {
+      fieldSet.add(match[1])
+    }
+  })
+  return Array.from(fieldSet)
+}
+
 /**
 * Return a transform function that takes a state, an event, and an emitter
 * object. When called, the transform function returns a new state and optionally
@@ -53,7 +68,8 @@ export default function stateMachine (storage, promos) {
     // Place and emit the promos.
     if (event.type === 'visit' || event.type === 'refresh') {
       const context = createContext(user, customState)
-      placedPromos = placePromos(seeds, promos, context)
+      const dataFields = extractDataFieldsFromPromos(promos)
+      placedPromos = placePromos(seeds, promos, context, dataFields)
     }
 
     // Store the user state as a side effect.

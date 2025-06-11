@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 6.9.0 (2025-06-XX)
+
+* Add TODO
+
 ## 6.8.0 (2025-06-04)
 
 * Add `newslettersLoaded` event handler so already subscribed newsletters can be constrained
