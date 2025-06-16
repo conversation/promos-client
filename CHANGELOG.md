@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 6.9.0 (2025-06-16)
+
+* Add `data` to `PROMO_PROPERTIES` so we can access and apply constraints on a datafield.
+
 ## 6.8.0 (2025-06-04)
 
 * Add `newslettersLoaded` event handler so already subscribed newsletters can be constrained

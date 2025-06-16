@@ -20,4 +20,31 @@ describe('placePromos', () => {
     expect(placePromos(seed, promos, { x: 'bar' })).toEqual([a, b, c, f, h])
     expect(placePromos(seed, promos, { x: 7 })).toEqual([a, b, c, g, h])
   })
+
+  it('should include promo if constraint on data field is satisfied', () => {
+    const promos = [
+      {
+        promoId: 1,
+        data: { funFactor: 99 },
+        constraints: 'data.funFactor = 99'
+      }
+    ]
+    const context = {}
+    const result = placePromos(seed, promos, context)
+    expect(result).toHaveLength(1)
+    expect(result[0].promoId).toBe(1)
+  })
+
+  it('should exclude promo if constraint on data field is not satisfied', () => {
+    const promos = [
+      {
+        promoId: 2,
+        data: { funFactor: 123 },
+        constraints: 'data.funFactor = 124'
+      }
+    ]
+    const context = {}
+    const result = placePromos(seed, promos, context)
+    expect(result).toHaveLength(0)
+  })
 })
