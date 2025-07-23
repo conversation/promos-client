@@ -5,8 +5,6 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    allow:
-      - dependency-type: "production"
     # We are ignoring all major, minor and patch versions, so dependabot only creates pull requests for security updates.
     ignore:
       - dependency-name: "*"
